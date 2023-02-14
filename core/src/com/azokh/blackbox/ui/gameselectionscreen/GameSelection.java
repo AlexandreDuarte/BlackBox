@@ -1,8 +1,8 @@
 package com.azokh.blackbox.ui.gameselectionscreen;
 
 
-import com.azokh.blackbox.BlackBox;
 import com.azokh.blackbox.GameScreen;
+import com.azokh.blackbox.ScreenSelectionInterface;
 import com.azokh.blackbox.Resources;
 import com.azokh.blackbox.ui.BBButton;
 import com.azokh.blackbox.ui.BBListener;
@@ -19,16 +19,14 @@ import java.util.List;
 public class GameSelection implements Element, BBListener, InputProcessor {
 
 
-    final BlackBox game;
     List<BBButton> buttons;
     public static final int FOUR_BUTTON = 0;
     public static final int SIX_BUTTON = 1;
     public static final int EIGHT_BUTTON = 2;
     public static final int BACK_BUTTON = 3;
+    ScreenSelectionInterface gameSelectionInterface;
 
-
-    public GameSelection(final BlackBox game) {
-        this.game = game;
+    public GameSelection(ScreenSelectionInterface gameSelectionInterface) {
         buttons = new ArrayList<BBButton>();
         BBButton backButton = new BBListenerButton(BACK_BUTTON, 40, 40, "BACK", Resources.textFont, this);
         //BBButton validateButton = new BBListenerButton(VALIDATE_BUTTON, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()*4/5, "VALIDATE", Resources.textFont, this, Align.center);
@@ -40,6 +38,8 @@ public class GameSelection implements Element, BBListener, InputProcessor {
         buttons.add(sixButton);
         buttons.add(eightButton);
         buttons.add(backButton);
+
+        this.gameSelectionInterface = gameSelectionInterface;
     }
 
     @Override
@@ -47,16 +47,17 @@ public class GameSelection implements Element, BBListener, InputProcessor {
 
         switch (flb.getId()) {
             case FOUR_BUTTON:
-                game.setScreen(new GameScreen(6));
+
+                gameSelectionInterface.setNextScreen(new GameScreen(6));
                 break;
             case SIX_BUTTON:
-                game.setScreen(new GameScreen(8));
+                gameSelectionInterface.setNextScreen(new GameScreen(8));
                 break;
             case EIGHT_BUTTON:
-                game.setScreen(new GameScreen(10));
+                gameSelectionInterface.setNextScreen(new GameScreen(10));
                 break;
             case BACK_BUTTON:
-                Resources.game.setScreen(Resources.mainMenuScreen);
+                gameSelectionInterface.setNextScreen(Resources.mainMenuScreen);
                 break;
         }
 

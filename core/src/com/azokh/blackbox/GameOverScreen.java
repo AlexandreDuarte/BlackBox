@@ -1,5 +1,7 @@
 package com.azokh.blackbox;
 
+import com.azokh.blackbox.effects.FadeInEffect;
+import com.azokh.blackbox.effects.FadeOutEffect;
 import com.azokh.blackbox.gamescreen.elements.TimerElement;
 import com.azokh.blackbox.ui.gameoverscreen.GameOver;
 import com.badlogic.gdx.Gdx;
@@ -10,10 +12,14 @@ public class GameOverScreen extends BBScreen {
     GameOver gameOver;
 
     TimerElement timer;
+    FadeInEffect fadeIn;
+    FadeOutEffect fadeOut;
 
     public GameOverScreen(TimerElement timer) {
         gameOver = new GameOver();
         this.timer = timer;
+        this.fadeIn = new FadeInEffect();
+        this.fadeOut = new FadeOutEffect();
     }
 
 
@@ -31,5 +37,11 @@ public class GameOverScreen extends BBScreen {
         Resources.batch.end();
 
         gameOver.render();
+
+        fadeIn.render();
+        fadeIn.update(delta);
+
+        fadeOut.render();
+        fadeOut.update(delta);
     }
 }

@@ -23,6 +23,12 @@ public class Effect {
         modifier = time / length;
     }
 
+    public void reset() {
+        modifier = 0.0f;
+        time = 0.0f;
+        finished = false;
+    }
+
     public float getModifier() {
         return modifier;
     }

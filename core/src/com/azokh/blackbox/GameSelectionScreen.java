@@ -1,24 +1,37 @@
 package com.azokh.blackbox;
 
+import com.azokh.blackbox.effects.FadeInEffect;
+import com.azokh.blackbox.effects.FadeOutEffect;
 import com.azokh.blackbox.gameselectionscreen.BeamGameSelectionScreen;
 import com.azokh.blackbox.ui.gameselectionscreen.GameSelection;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-public class GameSelectionScreen extends BBScreen {
+public class GameSelectionScreen extends BBScreen implements ScreenSelectionInterface {
 
     //TitleElement titleElement;
     //BeamMainMenuScreen beamMainMenu;
 
     GameSelection gameSelection;
     BeamGameSelectionScreen beamSelectionScreen;
+    FadeInEffect fadeIn;
+    FadeOutEffect fadeOut;
+
+    Screen nextScreen = null;
 
     public GameSelectionScreen() {
 
-        gameSelection = new GameSelection(Resources.game);
+        gameSelection = new GameSelection(this);
         Gdx.input.setInputProcessor(gameSelection);
+        this.fadeIn = new FadeInEffect();
+        this.fadeOut = new FadeOutEffect();
+    }
 
+    public void setNextScreen(Screen screen) {
+        nextScreen = screen;
+        fadeOut.start();
     }
 
     @Override
@@ -47,6 +60,17 @@ public class GameSelectionScreen extends BBScreen {
         Resources.batch.end();
 */
         gameSelection.render();
+
+        fadeIn.render();
+        fadeIn.update(delta);
+
+        fadeOut.render();
+        fadeOut.update(delta);
+
+        if (fadeOut.isFinished()) {
+            Resources.game.setScreen(nextScreen);
+        }
+
     }
 
     @Override

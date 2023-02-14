@@ -1,8 +1,8 @@
 package com.azokh.blackbox.ui.mainscreen;
 
-import com.azokh.blackbox.BlackBox;
 import com.azokh.blackbox.GameSelectionScreen;
 import com.azokh.blackbox.Resources;
+import com.azokh.blackbox.ScreenSelectionInterface;
 import com.azokh.blackbox.ui.BBButton;
 import com.azokh.blackbox.ui.BBListener;
 import com.azokh.blackbox.ui.BBListenerButton;
@@ -26,7 +26,7 @@ import java.util.List;
 public class MainMenu implements Element, BBListener, InputProcessor {
 
 
-    final BlackBox game;
+    ScreenSelectionInterface screenSelectionInterface;
     List<BBButton> buttons;
     public static final int START_BUTTON = 0;
     public static final int STATS_BUTTON = 1;
@@ -37,8 +37,8 @@ public class MainMenu implements Element, BBListener, InputProcessor {
     SVGTexture googlePlayTexture, googlePlayTextureSelected;
 
 
-    public MainMenu(final BlackBox game, int offset) {
-        this.game = game;
+    public MainMenu(ScreenSelectionInterface screenSelectionInterface, int offset) {
+        this.screenSelectionInterface = screenSelectionInterface;
         buttons = new ArrayList<BBButton>();
         BBButton startButton = new BBListenerButton(START_BUTTON, Gdx.graphics.getWidth() / 2 - offset - 60, 3*Gdx.graphics.getHeight() / 5, "START", Resources.menuFont, this, Align.right);
         BBButton statsButton = new BBListenerButton(STATS_BUTTON, Gdx.graphics.getWidth() / 2 - offset - 60, 3*Gdx.graphics.getHeight() / 5 + (int)(3*startButton.height()/2), "STATS", Resources.textFont, this, Align.right);
@@ -73,7 +73,7 @@ public class MainMenu implements Element, BBListener, InputProcessor {
 
         switch (flb.getId()) {
             case START_BUTTON:
-                game.setScreen(new GameSelectionScreen());
+                screenSelectionInterface.setNextScreen(new GameSelectionScreen());
                 break;
             case STATS_BUTTON:
 
@@ -83,7 +83,7 @@ public class MainMenu implements Element, BBListener, InputProcessor {
                 break;
             case GOOGLE_PLAY_BUTTON:
                 Gdx.app.log("GPGS", "Attempted to start logIn sequence");
-                game.getGsClient().auth();
+                Resources.game.getGsClient().auth();
                 break;
         }
 

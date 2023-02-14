@@ -1,13 +1,11 @@
 package com.azokh.blackbox;
 
-import com.azokh.blackbox.effects.Effect;
+import com.azokh.blackbox.effects.FadeInEffect;
+import com.azokh.blackbox.effects.FadeOutEffect;
 import com.azokh.blackbox.gamescreen.GameBoard;
 import com.azokh.blackbox.ui.gamescreen.GameMenu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class GameScreen extends BBScreen {
@@ -16,8 +14,8 @@ public class GameScreen extends BBScreen {
     GameMenu gameMenu;
     GameBoard gameBoard;
     InputMultiplexer inputMultiplexer;
-    Effect fadeOut;
-    Color fadeColor;
+    FadeOutEffect fadeOut;
+    FadeInEffect fadeIn;
 
     public GameScreen(int boardSize) {
         gameBoard = new GameBoard(boardSize);
@@ -25,7 +23,8 @@ public class GameScreen extends BBScreen {
         inputMultiplexer = new InputMultiplexer();
         inputMultiplexer.addProcessor(gameBoard);
         inputMultiplexer.addProcessor(gameMenu);
-        fadeOut = new Effect(1.0f);
+        fadeOut = new FadeOutEffect();
+        fadeIn = new FadeInEffect();
     }
 
 
@@ -38,36 +37,26 @@ public class GameScreen extends BBScreen {
     @Override
     public void render(float delta) {
 
+        gameBoard.update(delta);
+        gameMenu.update(delta);
 
-        if(!gameBoard.getEndGame()) {
+        ScreenUtils.clear(Resources.background);
 
-            gameBoard.update(delta);
-            gameMenu.update(delta);
+        gameBoard.render();
+        gameMenu.render();
 
-            ScreenUtils.clear(Resources.background);
+        fadeOut.render();
+        fadeOut.update(delta);
 
-            gameBoard.render();
-            gameMenu.render();
+        fadeIn.render();
+        fadeIn.update(delta);
+
+        if(gameBoard.getEndGame()) {
+            Gdx.input.setInputProcessor(null);
+            gameMenu.getTimer().stopTimer();
+            fadeOut.start();
         }
-
-
-
-
-
         //System.out.println(fadeOut.isFinished());
-
-        if(gameBoard.getEndGame() && !fadeOut.isFinished()) {
-            fadeColor = Resources.background.cpy().mul(1, 1, 1, fadeOut.getModifier());
-            fadeOut.update(delta);
-
-            Gdx.gl.glEnable(GL20.GL_BLEND);
-            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-            Resources.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-            Resources.shapeRenderer.setColor(fadeColor);
-            Resources.shapeRenderer.rect(0.0f, 0.0f, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-            Resources.shapeRenderer.end();
-            Gdx.gl.glDisable(GL20.GL_BLEND);
-        }
 
         if (fadeOut.isFinished()) {
             Resources.game.setScreen(new GameOverScreen(gameMenu.getTimer()));
