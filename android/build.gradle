@@ -22,8 +22,9 @@ android {
         applicationId "com.azokh.blackbox"
         minSdkVersion 19
         targetSdkVersion 32
-        versionCode 4
-        versionName "0.0.4"
+        versionCode 8
+        versionName "0.0.8"
+        multiDexEnabled true
     }
     buildTypes {
         release {

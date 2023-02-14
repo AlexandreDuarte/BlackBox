@@ -7,30 +7,33 @@ import com.badlogic.gdx.math.Rectangle;
 
 public abstract class BBButtonTexture extends BBButton {
 
-    private Rectangle bounds;
+    private Rectangle bounds[];
     private boolean selected;
     private boolean hidden;
     private boolean active;
     private boolean disabled;
 
-    private Texture texture;
-
-    private float text_x, text_y;
-
-    private int offsetx, offsety;
+    private Texture texture[];
 
     public BBButtonTexture(int id, int x, int y, Texture texture) {
+        this(id, x, y, texture, texture);
+    }
+
+    public BBButtonTexture(int id, int x, int y, Texture texture1, Texture texture2) {
         super(id);
         this.hidden = false;
         this.active = false;
         this.disabled = false;
 
-        this.offsetx = -texture.getWidth()/2;
-        this.offsety = texture.getHeight()/2;
+        int[] offsetx = new int[]{-texture1.getWidth() / 2, -texture2.getWidth() / 2};
+        int[] offsety = new int[]{texture1.getHeight() / 2, texture2.getHeight() / 2};
 
-        this.texture = texture;
+        this.texture = new Texture[]{texture1, texture2};
 
-        this.bounds = new Rectangle(x+offsetx, Gdx.graphics.getHeight() - (y +offsety), texture.getWidth(), texture.getHeight());
+        this.bounds = new Rectangle[]{
+                new Rectangle(x+ offsetx[0], Gdx.graphics.getHeight() - (y + offsety[0]), texture[0].getWidth(), texture[0].getHeight()),
+                new Rectangle(x+ offsetx[1], Gdx.graphics.getHeight() - (y + offsety[1]), texture[1].getWidth(), texture[1].getHeight())
+        };
     }
 
     public void execute()
@@ -44,36 +47,37 @@ public abstract class BBButtonTexture extends BBButton {
 
     public boolean contains(float x, float y)
     {
-        return bounds.contains(x, y);
+        return bounds[selected? 1 : 0].contains(x, y);
     }
 
     public float x()
     {
-        return bounds.x;
+        return bounds[selected? 1 : 0].x;
     }
 
     public float y()
     {
-        return bounds.y;
+        return bounds[selected? 1 : 0].y;
     }
 
     public float width()
     {
-        return bounds.width;
+        return bounds[selected? 1 : 0].width;
     }
 
     public float height()
     {
-        return bounds.height;
+        return bounds[selected? 1 : 0].height;
     }
 
     public void draw(SpriteBatch batch)
     {
-        if(hidden != true)
+        if(!hidden)
         {
-            //TODO
-            //if (selected) {
-            batch.draw(texture, bounds.x, bounds.y, bounds.width, bounds.height, 0, 0, texture.getWidth(), texture.getHeight(), false, true);
+            if (selected) {
+                batch.draw(texture[1], bounds[1].x, bounds[1].y, bounds[1].width, bounds[1].height, 0, 0, texture[1].getWidth(), texture[1].getHeight(), false, true);
+            }
+            batch.draw(texture[0], bounds[0].x, bounds[0].y, bounds[0].width, bounds[0].height, 0, 0, texture[0].getWidth(), texture[0].getHeight(), false, true);
 
 
         }
@@ -114,7 +118,7 @@ public abstract class BBButtonTexture extends BBButton {
 
     public Rectangle getBounds()
     {
-        return bounds;
+        return bounds[selected? 1 : 0];
     }
 
     public boolean isDisabled()

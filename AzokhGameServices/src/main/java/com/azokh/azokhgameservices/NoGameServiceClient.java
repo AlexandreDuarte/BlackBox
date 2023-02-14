@@ -5,4 +5,9 @@ public class NoGameServiceClient implements IGameServiceClient{
     public void initialize() {
 
     }
+
+    @Override
+    public void auth() {
+
+    }
 }

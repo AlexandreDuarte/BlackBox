@@ -19,7 +19,7 @@ buildscript {
 allprojects {
     apply plugin: "eclipse"
 
-    version = '0.0.4'
+    version = '0.0.8'
     ext {
         appName = "BlackBox"
         gdxVersion = '1.11.0'
@@ -66,8 +66,10 @@ project(":android") {
         natives "com.mazatech.amanithsvg:amanithsvg-gdx:$amanithsvgVersion:natives-x86"
         natives "com.mazatech.amanithsvg:amanithsvg-gdx:$amanithsvgVersion:natives-x86_64"
 
+        implementation 'com.android.support:multidex:1.0.3'
+        implementation 'com.google.android.gms:play-services-games-v2:17.0.0'
+
         implementation project(":AzokhGameServices")
-        implementation project(":AzokhGPGameServices")
     }
 }
 

@@ -1,3 +1,2 @@
 include 'android', 'core', 'ios'
 include ':AzokhGameServices'
-include ':AzokhGPGameServices'

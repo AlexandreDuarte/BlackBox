@@ -2,7 +2,7 @@ package com.azokh.blackbox;
 
 import android.os.Bundle;
 
-import com.azokh.azokhgpgameservices.GPGSClient;
+import com.azokh.blackbox.gameservices.GPGSClient;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 

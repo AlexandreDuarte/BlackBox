@@ -28,7 +28,7 @@ public class BlackBox extends Game {
 		parameter.color = Resources.titleColor;
 		parameter.magFilter = Texture.TextureFilter.Linear;
 		parameter.minFilter = Texture.TextureFilter.Linear;
-		parameter.characters = "0123456789VDSTARBLCKOXIEU:";
+		parameter.characters = "0123456789VDSTARBLCKOXIEU:x";
 		parameter.packer = fontTexture;
 		Resources.titleFont = generator.generateFont(parameter);
 		Resources.menuFont = generator.generateFont(parameter);
@@ -54,6 +54,10 @@ public class BlackBox extends Game {
 
 
 		this.setScreen(Resources.mainMenuScreen);
+	}
+
+	public IGameServiceClient getGsClient() {
+		return gsClient;
 	}
 
 	@Override

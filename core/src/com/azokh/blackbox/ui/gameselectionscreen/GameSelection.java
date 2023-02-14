@@ -1,89 +1,62 @@
-package com.azokh.blackbox.ui.mainscreen;
+package com.azokh.blackbox.ui.gameselectionscreen;
+
 
 import com.azokh.blackbox.BlackBox;
-import com.azokh.blackbox.GameSelectionScreen;
+import com.azokh.blackbox.GameScreen;
 import com.azokh.blackbox.Resources;
 import com.azokh.blackbox.ui.BBButton;
 import com.azokh.blackbox.ui.BBListener;
 import com.azokh.blackbox.ui.BBListenerButton;
-import com.azokh.blackbox.ui.BBListenerButtonTexture;
 import com.azokh.blackbox.ui.Element;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Align;
-import com.mazatech.gdx.SVGTexture;
-import com.mazatech.svgt.SVGAlignment;
-import com.mazatech.svgt.SVGAssets;
-import com.mazatech.svgt.SVGColor;
-import com.mazatech.svgt.SVGDocument;
-import com.mazatech.svgt.SVGTAlign;
-import com.mazatech.svgt.SVGTMeetOrSlice;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainMenu implements Element, BBListener, InputProcessor {
+public class GameSelection implements Element, BBListener, InputProcessor {
 
 
     final BlackBox game;
     List<BBButton> buttons;
-    public static final int START_BUTTON = 0;
-    public static final int STATS_BUTTON = 1;
-    public static final int ABOUT_BUTTON = 2;
-    public static final int GOOGLE_PLAY_BUTTON = 3;
-
-    SVGDocument googlePlay, googlePlaySelected;
-    SVGTexture googlePlayTexture, googlePlayTextureSelected;
+    public static final int FOUR_BUTTON = 0;
+    public static final int SIX_BUTTON = 1;
+    public static final int EIGHT_BUTTON = 2;
+    public static final int BACK_BUTTON = 3;
 
 
-    public MainMenu(final BlackBox game, int offset) {
+    public GameSelection(final BlackBox game) {
         this.game = game;
         buttons = new ArrayList<BBButton>();
-        BBButton startButton = new BBListenerButton(START_BUTTON, Gdx.graphics.getWidth() / 2 - offset - 60, 3*Gdx.graphics.getHeight() / 5, "START", Resources.menuFont, this, Align.right);
-        BBButton statsButton = new BBListenerButton(STATS_BUTTON, Gdx.graphics.getWidth() / 2 - offset - 60, 3*Gdx.graphics.getHeight() / 5 + (int)(3*startButton.height()/2), "STATS", Resources.textFont, this, Align.right);
-        BBButton exitButton = new BBListenerButton(ABOUT_BUTTON, Gdx.graphics.getWidth() / 2 - offset - 60, 3*Gdx.graphics.getHeight() / 5 + (int)(3*startButton.height()/2) + (int)(3*statsButton.height()/2), "ABOUT", Resources.textFont, this, Align.right);
+        BBButton backButton = new BBListenerButton(BACK_BUTTON, 40, 40, "BACK", Resources.textFont, this);
+        //BBButton validateButton = new BBListenerButton(VALIDATE_BUTTON, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()*4/5, "VALIDATE", Resources.textFont, this, Align.center);
+        BBButton fourButton = new BBListenerButton(FOUR_BUTTON, Gdx.graphics.getWidth() / 2, 2*Gdx.graphics.getHeight() / 5, "4x4", Resources.menuFont, this, Align.center);
+        BBButton sixButton = new BBListenerButton(SIX_BUTTON, Gdx.graphics.getWidth() / 2, 2*Gdx.graphics.getHeight() / 5 + (int)(3*fourButton.height()/2), "6x6", Resources.menuFont, this, Align.center);
+        BBButton eightButton = new BBListenerButton(EIGHT_BUTTON, Gdx.graphics.getWidth() / 2, 2*Gdx.graphics.getHeight() / 5 + (int)(3*fourButton.height()/2) + (int)(3*sixButton.height()/2), "8x8", Resources.menuFont, this, Align.center);
 
-        googlePlay = SVGAssets.createDocument(Gdx.files.internal("google-play.svg"));
-        googlePlay.setAspectRatio(new SVGAlignment(SVGTAlign.XMidYMid,
-                SVGTMeetOrSlice.Slice));
-
-        googlePlaySelected = SVGAssets.createDocument(Gdx.files.internal("google-play-selected.svg"));
-        googlePlaySelected.setAspectRatio(new SVGAlignment(SVGTAlign.XMidYMid,
-                SVGTMeetOrSlice.Slice));
-
-        googlePlayTexture = new SVGTexture(googlePlay,
-                (((Gdx.graphics.getWidth()/16)*16)/20), (((Gdx.graphics.getWidth()/16)*16)/20),
-                SVGColor.Clear, false);
-
-        googlePlayTextureSelected = new SVGTexture(googlePlaySelected,
-                (((Gdx.graphics.getWidth()/16)*16)/20), (((Gdx.graphics.getWidth()/16)*16)/20),
-                SVGColor.Clear, false);
-
-        BBButton googlePlayButton = new BBListenerButtonTexture(GOOGLE_PLAY_BUTTON, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight() - 100, googlePlayTexture, googlePlayTextureSelected, this);
-
-        buttons.add(startButton);
-        buttons.add(statsButton);
-        buttons.add(exitButton);
-        buttons.add(googlePlayButton);
+        buttons.add(fourButton);
+        buttons.add(sixButton);
+        buttons.add(eightButton);
+        buttons.add(backButton);
     }
 
     @Override
     public void onClick(BBButton flb) {
 
         switch (flb.getId()) {
-            case START_BUTTON:
-                game.setScreen(new GameSelectionScreen());
+            case FOUR_BUTTON:
+                game.setScreen(new GameScreen(6));
                 break;
-            case STATS_BUTTON:
-
+            case SIX_BUTTON:
+                game.setScreen(new GameScreen(8));
                 break;
-            case ABOUT_BUTTON:
-
+            case EIGHT_BUTTON:
+                game.setScreen(new GameScreen(10));
                 break;
-            case GOOGLE_PLAY_BUTTON:
-                Gdx.app.log("GPGS", "Attempted to start logIn sequence");
-                game.getGsClient().auth();
+            case BACK_BUTTON:
+                Resources.game.setScreen(Resources.mainMenuScreen);
                 break;
         }
 
@@ -123,8 +96,6 @@ public class MainMenu implements Element, BBListener, InputProcessor {
 
     @Override
     public void dispose() {
-        googlePlay.dispose();
-        googlePlayTexture.dispose();
     }
 
     @Override
