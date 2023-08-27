@@ -1,6 +1,6 @@
 android {
-    buildToolsVersion "32.1.0-rc1"
-    compileSdkVersion 32
+    buildToolsVersion "33.0.2"
+    compileSdkVersion 33
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -21,9 +21,9 @@ android {
     defaultConfig {
         applicationId "com.azokh.blackbox"
         minSdkVersion 19
-        targetSdkVersion 32
-        versionCode 8
-        versionName "0.0.8"
+        targetSdkVersion 33
+        versionCode 9
+        versionName "0.0.9"
         multiDexEnabled true
     }
     buildTypes {

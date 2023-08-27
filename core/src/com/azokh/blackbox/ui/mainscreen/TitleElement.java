@@ -10,7 +10,7 @@ public class TitleElement implements Element {
 
     GlyphLayout title1, title2;
 
-    private int titleDelta;
+    private final int titleDelta;
 
     public TitleElement() {
         title1 = new GlyphLayout(Resources.titleFont, "BLACK");
@@ -22,8 +22,8 @@ public class TitleElement implements Element {
 
     @Override
     public void render() {
-        Resources.titleFont.draw(Resources.batch, title1, Gdx.graphics.getWidth()/2.0f - (title1.width+title2.width)/2 - 40, 2.0f*Gdx.graphics.getHeight()/3);
-        Resources.titleFont.draw(Resources.batch, title2, Gdx.graphics.getWidth()/2.0f - (title1.width+title2.width)/2 + title1.width + 40, 2.0f*Gdx.graphics.getHeight()/3);
+        Resources.titleFont.draw(Resources.batch, title1, Gdx.graphics.getWidth()/2.0f - (title1.width+title2.width)/2 - 40, 3.0f*Gdx.graphics.getHeight()/4);
+        Resources.titleFont.draw(Resources.batch, title2, Gdx.graphics.getWidth()/2.0f - (title1.width+title2.width)/2 + title1.width + 40, 3.0f*Gdx.graphics.getHeight()/4);
     }
 
     @Override

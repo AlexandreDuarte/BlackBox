@@ -1,6 +1,7 @@
 package com.azokh.blackbox.ui.gameoverscreen;
 
 import com.azokh.blackbox.Resources;
+import com.azokh.blackbox.gamescreen.GameBoardObserver;
 import com.azokh.blackbox.ui.BBButton;
 import com.azokh.blackbox.ui.BBListener;
 import com.azokh.blackbox.ui.BBListenerButton;
@@ -20,16 +21,20 @@ public class GameOver implements Element, BBListener, InputProcessor {
 
     public static final int BACK_BUTTON = 0;
 
+    GameBoardObserver gameRealBoard;
 
-    public GameOver() {
-        buttons = new ArrayList<BBButton>();
-        BBButton backButton = new BBListenerButton(BACK_BUTTON, Gdx.graphics.getWidth()/2, 2*Gdx.graphics.getHeight()/3, "BACK", Resources.textFont, this, Align.center);
+    public boolean exit = false;
+
+    public GameOver(GameBoardObserver gameRealBoard) {
+        this.gameRealBoard = gameRealBoard;
+        buttons = new ArrayList<>();
+        BBButton backButton = new BBListenerButton(BACK_BUTTON, Gdx.graphics.getWidth()/2, 4*Gdx.graphics.getHeight()/5, "BACK", Resources.textFont, this, Align.center);
         buttons.add(backButton);
     }
 
     @Override
     public void onClick(BBButton flb) {
-        Resources.game.setScreen(Resources.mainMenuScreen);
+        this.exit = true;
     }
 
     @Override
@@ -46,6 +51,7 @@ public class GameOver implements Element, BBListener, InputProcessor {
         Resources.shapeRenderer.end();
 
 
+        this.gameRealBoard.render();
 
         Resources.batch.begin();
         for(int i = 0; i < buttons.size(); i++)
@@ -120,6 +126,11 @@ public class GameOver implements Element, BBListener, InputProcessor {
     }
 
     @Override
+    public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
         return false;
     }
@@ -133,5 +144,6 @@ public class GameOver implements Element, BBListener, InputProcessor {
     public boolean scrolled(float amountX, float amountY) {
         return false;
     }
+
 }
 

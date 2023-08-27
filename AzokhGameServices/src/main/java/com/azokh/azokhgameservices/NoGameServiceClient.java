@@ -10,4 +10,9 @@ public class NoGameServiceClient implements IGameServiceClient{
     public void auth() {
 
     }
+
+    @Override
+    public void updateLeaderboard(String leaderboardID, long value) {
+
+    }
 }

@@ -17,13 +17,13 @@ public class GameMenu implements Element, BBListener, InputProcessor {
 
     List<BBButton> buttons;
 
-    private TimerElement timer;
+    private final TimerElement timer;
 
     public static final int BACK_BUTTON = 0;
     public static final int VALIDATE_BUTTON = 1;
 
     public GameMenu() {
-        this.timer = new TimerElement(Gdx.graphics.getWidth()/2, 4*Gdx.graphics.getHeight()/5, Resources.textFont);
+        this.timer = new TimerElement(Gdx.graphics.getWidth()/2, 4*Gdx.graphics.getHeight()/5, Resources.textFont, true);
         buttons = new ArrayList<BBButton>();
         BBButton backButton = new BBListenerButton(BACK_BUTTON, 40, 40, "BACK", Resources.textFont, this);
         //BBButton validateButton = new BBListenerButton(VALIDATE_BUTTON, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()*4/5, "VALIDATE", Resources.textFont, this, Align.center);
@@ -74,6 +74,9 @@ public class GameMenu implements Element, BBListener, InputProcessor {
 
     @Override
     public void update(float delta) {
+        //if (gameBoard.hasGameStarted()) {
+        //    timer.resumeTimer();
+        //}
         timer.update(delta);
     }
 
@@ -135,6 +138,11 @@ public class GameMenu implements Element, BBListener, InputProcessor {
             }
             buttons.get(i).setSelected(false);
         }
+        return false;
+    }
+
+    @Override
+    public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
         return false;
     }
 

@@ -39,10 +39,10 @@ public class MainMenu implements Element, BBListener, InputProcessor {
 
     public MainMenu(ScreenSelectionInterface screenSelectionInterface, int offset) {
         this.screenSelectionInterface = screenSelectionInterface;
-        buttons = new ArrayList<BBButton>();
-        BBButton startButton = new BBListenerButton(START_BUTTON, Gdx.graphics.getWidth() / 2 - offset - 60, 3*Gdx.graphics.getHeight() / 5, "START", Resources.menuFont, this, Align.right);
-        BBButton statsButton = new BBListenerButton(STATS_BUTTON, Gdx.graphics.getWidth() / 2 - offset - 60, 3*Gdx.graphics.getHeight() / 5 + (int)(3*startButton.height()/2), "STATS", Resources.textFont, this, Align.right);
-        BBButton exitButton = new BBListenerButton(ABOUT_BUTTON, Gdx.graphics.getWidth() / 2 - offset - 60, 3*Gdx.graphics.getHeight() / 5 + (int)(3*startButton.height()/2) + (int)(3*statsButton.height()/2), "ABOUT", Resources.textFont, this, Align.right);
+        buttons = new ArrayList<>();
+        BBButton startButton = new BBListenerButton(START_BUTTON, Gdx.graphics.getWidth() / 2 - offset - 60, Gdx.graphics.getHeight() / 2, "START", Resources.menuFont, this, Align.right);
+        BBButton statsButton = new BBListenerButton(STATS_BUTTON, Gdx.graphics.getWidth() / 2 - offset - 60, Gdx.graphics.getHeight() / 2 + (int)(5*startButton.height()/4), "STATS", Resources.textFont, this, Align.right);
+        //BBButton exitButton = new BBListenerButton(ABOUT_BUTTON, Gdx.graphics.getWidth() / 2 - offset - 80, Gdx.graphics.getHeight() / 2 + (int)(5*startButton.height()/4) + (int)(5*statsButton.height()/4), "ABOUT", Resources.textFont, this, Align.right);
 
         googlePlay = SVGAssets.createDocument(Gdx.files.internal("google-play.svg"));
         googlePlay.setAspectRatio(new SVGAlignment(SVGTAlign.XMidYMid,
@@ -64,7 +64,7 @@ public class MainMenu implements Element, BBListener, InputProcessor {
 
         buttons.add(startButton);
         buttons.add(statsButton);
-        buttons.add(exitButton);
+        //buttons.add(exitButton);
         buttons.add(googlePlayButton);
     }
 
@@ -172,6 +172,11 @@ public class MainMenu implements Element, BBListener, InputProcessor {
             buttons.get(i).setSelected(false);
         }
         return true;
+    }
+
+    @Override
+    public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
+        return false;
     }
 
     @Override

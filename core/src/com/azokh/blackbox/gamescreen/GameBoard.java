@@ -7,6 +7,7 @@ import com.azokh.blackbox.gamescreen.elements.HiddenBoardCell;
 import com.azokh.blackbox.gamescreen.elements.InputBoardCell;
 import com.azokh.blackbox.gamescreen.elements.InputCornerCell;
 import com.azokh.blackbox.ui.Element;
+import com.azokh.blackbox.ui.gamescreen.GameMenu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -25,10 +26,14 @@ public class GameBoard implements Element, InputProcessor {
     GameLogic gameLogic;
     int[][] board_raw;
 
+    boolean gameStarted = false;
+
     boolean endGame = false;
 
-    public GameBoard(int size) {
+    GameMenu gm;
 
+    public GameBoard(int size, GameMenu gm) {
+        this.gm = gm;
         this.boardSize = size+2;
         this.cellSize = Gdx.graphics.getWidth()/(float)(size+3);
         this.board_elements = new BoardCell[boardSize][boardSize];
@@ -121,9 +126,7 @@ public class GameBoard implements Element, InputProcessor {
         for (int i = 0; i < boardSize-2; i++) {
             for (int j = 0; j < boardSize-2; j++) {
                 if (this.board_raw[j][i] == 1) {
-                    if (this.board_elements[j+1][i+1].isActive()) {
-                        continue;
-                    } else {
+                    if (!this.board_elements[j+1][i+1].isActive()) {
                         return false;
                     }
                 } else {
@@ -134,6 +137,10 @@ public class GameBoard implements Element, InputProcessor {
             }
         }
         return true;
+    }
+
+    public boolean hasGameStarted() {
+        return this.gameStarted;
     }
 
     public boolean getEndGame() { return endGame; }
@@ -158,6 +165,10 @@ public class GameBoard implements Element, InputProcessor {
         for (int x = 0; x < boardSize; x++) {
             for (int y = 0; y < boardSize; y++) {
                 if (this.board_elements[y][x].getBounds().contains(screenX, Gdx.graphics.getHeight() - screenY)) {
+                    if (!this.gameStarted) {
+                        this.gameStarted = true;
+                        gm.getTimer().resumeTimer();
+                    }
                     if (x == 0 || x==boardSize-1 || y == 0 || y==boardSize-1) {
                         if (x!=y && x+y != boardSize-1 && gameLogic.stop) {
                             processBeamCreation(x, y, y==0 || y==boardSize-1, y==boardSize-1 || x==boardSize-1);
@@ -195,6 +206,11 @@ public class GameBoard implements Element, InputProcessor {
 
             }
         }
+        return false;
+    }
+
+    @Override
+    public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
         return false;
     }
 

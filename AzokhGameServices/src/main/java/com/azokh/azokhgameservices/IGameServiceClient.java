@@ -2,9 +2,11 @@ package com.azokh.azokhgameservices;
 
 public interface IGameServiceClient {
 
-    public void initialize();
+    void initialize();
 
-    public void auth();
+    void auth();
 
+
+    void updateLeaderboard(String leaderboardID, long value);
 
 }

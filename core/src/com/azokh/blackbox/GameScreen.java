@@ -3,6 +3,7 @@ package com.azokh.blackbox;
 import com.azokh.blackbox.effects.FadeInEffect;
 import com.azokh.blackbox.effects.FadeOutEffect;
 import com.azokh.blackbox.gamescreen.GameBoard;
+import com.azokh.blackbox.gamescreen.GameBoardObserver;
 import com.azokh.blackbox.ui.gamescreen.GameMenu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
@@ -17,9 +18,12 @@ public class GameScreen extends BBScreen {
     FadeOutEffect fadeOut;
     FadeInEffect fadeIn;
 
-    public GameScreen(int boardSize) {
-        gameBoard = new GameBoard(boardSize);
+    GameType gameType;
+
+    public GameScreen(GameType gameType) {
+        this.gameType = gameType;
         gameMenu = new GameMenu();
+        gameBoard = new GameBoard(gameType.getBoardSize()+2, gameMenu);
         inputMultiplexer = new InputMultiplexer();
         inputMultiplexer.addProcessor(gameBoard);
         inputMultiplexer.addProcessor(gameMenu);
@@ -42,7 +46,6 @@ public class GameScreen extends BBScreen {
 
         ScreenUtils.clear(Resources.background);
 
-        gameBoard.render();
         gameMenu.render();
 
         fadeOut.render();
@@ -50,6 +53,8 @@ public class GameScreen extends BBScreen {
 
         fadeIn.render();
         fadeIn.update(delta);
+
+        gameBoard.render();
 
         if(gameBoard.getEndGame()) {
             Gdx.input.setInputProcessor(null);
@@ -59,7 +64,7 @@ public class GameScreen extends BBScreen {
         //System.out.println(fadeOut.isFinished());
 
         if (fadeOut.isFinished()) {
-            Resources.game.setScreen(new GameOverScreen(gameMenu.getTimer()));
+            Resources.game.setScreen(new GameOverScreen(gameMenu.getTimer(), new GameBoardObserver(this.gameBoard)));
         }
     }
 
