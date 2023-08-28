@@ -1,5 +1,7 @@
 package com.azokh.blackbox;
 
+import com.azokh.blackbox.mainscreen.MainMenuScreen;
+import com.azokhgameservices.IGameServiceClient;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -26,5 +28,8 @@ public class Resources {
     public static Color background = new Color(0x161613FF);
     public static Color board = new Color(0x30302EFF);
     public static Color boardInactive = new Color(0x20201EFF);
+
+    public static IGameServiceClient gsClient;
+
 
 }

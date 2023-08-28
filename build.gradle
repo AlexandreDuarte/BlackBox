@@ -9,7 +9,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.2'
+        classpath 'com.android.tools.build:gradle:8.1.1'
         classpath 'com.mobidevelop.robovm:robovm-gradle-plugin:2.3.16'
         
 
@@ -69,7 +69,6 @@ project(":android") {
         implementation 'com.android.support:multidex:1.0.3'
         implementation 'com.google.android.gms:play-services-games-v2:17.0.0'
 
-        implementation project(":AzokhGameServices")
     }
 }
 
@@ -80,7 +79,6 @@ project(":core") {
     dependencies {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
-        implementation project(":AzokhGameServices")
     }
 }
 

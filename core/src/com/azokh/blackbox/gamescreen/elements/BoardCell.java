@@ -1,6 +1,6 @@
 package com.azokh.blackbox.gamescreen.elements;
 
-import com.azokh.blackbox.ui.Element;
+import com.azokh.blackbox.ui.element.Element;
 import com.badlogic.gdx.math.Rectangle;
 
 public abstract class BoardCell implements Element {

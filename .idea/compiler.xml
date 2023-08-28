@@ -2,7 +2,7 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="1.7">
-      <module name="BlackBox.android" target="11" />
+      <module name="BlackBox.android" target="17" />
       <module name="BlackBox.AzokhGPGameServices" target="11" />
       <module name="BlackBox.gameservices" target="11" />
     </bytecodeTargetLevel>

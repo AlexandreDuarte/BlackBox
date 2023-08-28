@@ -1,11 +1,13 @@
 package com.azokh.blackbox.ui.gameoverscreen;
 
+import com.azokh.blackbox.GameType;
 import com.azokh.blackbox.Resources;
+import com.azokh.blackbox.data.GameStatEntry;
 import com.azokh.blackbox.gamescreen.GameBoardObserver;
-import com.azokh.blackbox.ui.BBButton;
-import com.azokh.blackbox.ui.BBListener;
-import com.azokh.blackbox.ui.BBListenerButton;
-import com.azokh.blackbox.ui.Element;
+import com.azokh.blackbox.ui.element.button.BBButton;
+import com.azokh.blackbox.ui.element.button.BBListener;
+import com.azokh.blackbox.ui.element.button.BBListenerButton;
+import com.azokh.blackbox.ui.element.Element;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -25,8 +27,9 @@ public class GameOver implements Element, BBListener, InputProcessor {
 
     public boolean exit = false;
 
-    public GameOver(GameBoardObserver gameRealBoard) {
+    public GameOver(GameType gameType, float gameScore, GameBoardObserver gameRealBoard) {
         this.gameRealBoard = gameRealBoard;
+        Resources.gsClient.updateLeaderboard(gameType.getLeaderboard(), new GameStatEntry((long)(gameScore*1000)));
         buttons = new ArrayList<>();
         BBButton backButton = new BBListenerButton(BACK_BUTTON, Gdx.graphics.getWidth()/2, 4*Gdx.graphics.getHeight()/5, "BACK", Resources.textFont, this, Align.center);
         buttons.add(backButton);

@@ -6,8 +6,8 @@ import com.azokh.blackbox.gamescreen.elements.EmptyBoardCell;
 import com.azokh.blackbox.gamescreen.elements.HiddenBoardCell;
 import com.azokh.blackbox.gamescreen.elements.InputBoardCell;
 import com.azokh.blackbox.gamescreen.elements.InputCornerCell;
-import com.azokh.blackbox.ui.Element;
-import com.azokh.blackbox.ui.gamescreen.GameMenu;
+import com.azokh.blackbox.gamescreen.elements.TimerElement;
+import com.azokh.blackbox.ui.element.Element;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -30,10 +30,10 @@ public class GameBoard implements Element, InputProcessor {
 
     boolean endGame = false;
 
-    GameMenu gm;
+    TimerElement gameTimer;
 
-    public GameBoard(int size, GameMenu gm) {
-        this.gm = gm;
+    public GameBoard(int size, TimerElement gameTimer) {
+        this.gameTimer = gameTimer;
         this.boardSize = size+2;
         this.cellSize = Gdx.graphics.getWidth()/(float)(size+3);
         this.board_elements = new BoardCell[boardSize][boardSize];
@@ -167,7 +167,7 @@ public class GameBoard implements Element, InputProcessor {
                 if (this.board_elements[y][x].getBounds().contains(screenX, Gdx.graphics.getHeight() - screenY)) {
                     if (!this.gameStarted) {
                         this.gameStarted = true;
-                        gm.getTimer().resumeTimer();
+                        gameTimer.resumeTimer();
                     }
                     if (x == 0 || x==boardSize-1 || y == 0 || y==boardSize-1) {
                         if (x!=y && x+y != boardSize-1 && gameLogic.stop) {

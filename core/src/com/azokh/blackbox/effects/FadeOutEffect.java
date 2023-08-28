@@ -1,7 +1,7 @@
 package com.azokh.blackbox.effects;
 
 import com.azokh.blackbox.Resources;
-import com.azokh.blackbox.ui.Element;
+import com.azokh.blackbox.ui.element.Element;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;

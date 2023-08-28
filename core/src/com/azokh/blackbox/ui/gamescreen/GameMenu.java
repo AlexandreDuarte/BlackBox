@@ -2,10 +2,10 @@ package com.azokh.blackbox.ui.gamescreen;
 
 import com.azokh.blackbox.Resources;
 import com.azokh.blackbox.gamescreen.elements.TimerElement;
-import com.azokh.blackbox.ui.BBButton;
-import com.azokh.blackbox.ui.BBListener;
-import com.azokh.blackbox.ui.BBListenerButton;
-import com.azokh.blackbox.ui.Element;
+import com.azokh.blackbox.ui.element.button.BBButton;
+import com.azokh.blackbox.ui.element.button.BBListener;
+import com.azokh.blackbox.ui.element.button.BBListenerButton;
+import com.azokh.blackbox.ui.element.Element;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;

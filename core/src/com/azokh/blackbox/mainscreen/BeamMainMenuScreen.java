@@ -1,7 +1,7 @@
 package com.azokh.blackbox.mainscreen;
 
-import com.azokh.blackbox.BeamElement;
-import com.azokh.blackbox.ui.Element;
+import com.azokh.blackbox.ui.element.beam.BeamElement;
+import com.azokh.blackbox.ui.element.Element;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 

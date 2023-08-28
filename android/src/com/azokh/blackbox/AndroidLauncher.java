@@ -8,7 +8,7 @@ import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 
 public class AndroidLauncher extends AndroidApplication {
 
-	GPGSClient gpgsClient;
+	public GPGSClient gpgsClient;
 
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
@@ -20,10 +20,11 @@ public class AndroidLauncher extends AndroidApplication {
 		config.useGyroscope = false;
 		config.useRotationVectorSensor = false;
 
-		BlackBox game = new BlackBox();
 		gpgsClient = new GPGSClient(this);
+		Resources.gsClient = gpgsClient;
 		gpgsClient.initialize();
-		game.gsClient = gpgsClient;
+
+		BlackBox game = new BlackBox();
 		initialize(game, config);
 	}
 }

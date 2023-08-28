@@ -1,8 +1,8 @@
 package com.azokh.blackbox;
 
 
-import com.azokh.azokhgameservices.IGameServiceClient;
-import com.azokh.azokhgameservices.NoGameServiceClient;
+import com.azokh.blackbox.mainscreen.MainMenuScreen;
+import com.azokhgameservices.NoGameServiceClient;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -16,7 +16,6 @@ import com.mazatech.svgt.SVGAssets;
 
 public class BlackBox extends Game {
 
-	IGameServiceClient gsClient;
 
 	@Override
 	public void create () {
@@ -49,15 +48,11 @@ public class BlackBox extends Game {
 
 		SVGAssets.init();
 
-		if (gsClient == null)
-			gsClient = new NoGameServiceClient();
+		if (Resources.gsClient == null)
+			Resources.gsClient = new NoGameServiceClient();
 
 
 		this.setScreen(Resources.mainMenuScreen);
-	}
-
-	public IGameServiceClient getGsClient() {
-		return gsClient;
 	}
 
 	@Override

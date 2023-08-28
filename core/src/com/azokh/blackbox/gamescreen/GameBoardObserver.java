@@ -3,7 +3,7 @@ package com.azokh.blackbox.gamescreen;
 import com.azokh.blackbox.Resources;
 import com.azokh.blackbox.gamescreen.elements.ObserverBoardCell;
 import com.azokh.blackbox.gamescreen.elements.StaticBoardCell;
-import com.azokh.blackbox.ui.Element;
+import com.azokh.blackbox.ui.element.Element;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class GameBoardObserver implements Element {

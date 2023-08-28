@@ -1,7 +1,7 @@
 package com.azokh.blackbox.gamescreen.elements;
 
 import com.azokh.blackbox.Resources;
-import com.azokh.blackbox.ui.Element;
+import com.azokh.blackbox.ui.element.Element;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.utils.Align;
 
@@ -53,7 +53,7 @@ public class TimerElement implements Element {
     }
 
     public float getScore() {
-        return (int) timer;
+        return timer;
     }
 
     public void stopTimer() {
