@@ -1,5 +1,6 @@
 package com.azokh.blackbox.ui.element.button;
 
+import com.azokh.blackbox.Resources;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
@@ -16,13 +17,20 @@ public abstract class BBButton {
 
     private final int id;
 
-    public BBButton(int id) {
-
+    public BBButton(int id, float x, float y, float width, float height) {
+        this.bounds = new Rectangle(x, Resources.game.getGameHeight() - (y), width, height);
         this.hidden = false;
         this.active = false;
         this.disabled = false;
         this.id = id;
 
+    }
+
+    public BBButton(int id) {
+        this.hidden = false;
+        this.active = false;
+        this.disabled = false;
+        this.id = id;
     }
 
     protected abstract void action();
@@ -105,5 +113,9 @@ public abstract class BBButton {
     public void setDisabled(boolean disabled)
     {
         this.disabled = disabled;
+    }
+
+    protected void setBounds(float x, float y, float width, float height) {
+        this.bounds = new Rectangle(x, Resources.game.getGameHeight() - y, width, height);
     }
 }

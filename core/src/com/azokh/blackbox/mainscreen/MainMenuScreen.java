@@ -36,7 +36,7 @@ public class MainMenuScreen extends BBScreen implements ScreenSelectionInterface
 
     @Override
     public void show() {
-        Resources.batch.flush();
+        Resources.game.getBatch().flush();
         Gdx.input.setInputProcessor(menu);
         beamMainMenu = new BeamMainMenuScreen(titleElement.getTitleDelta(), (int)titleElement.getHeight(), Resources.beamColor1, Resources.beamColor2);
     }
@@ -46,16 +46,16 @@ public class MainMenuScreen extends BBScreen implements ScreenSelectionInterface
         ScreenUtils.clear(Resources.background);
 
         beamMainMenu.update(delta);
-        Resources.camera.update();
-        Resources.shapeRenderer.setProjectionMatrix(Resources.camera.combined);
+        Resources.game.getCamera().update();
+        Resources.game.getShapeRenderer().setProjectionMatrix(Resources.game.getCamera().combined);
 
-        Resources.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        Resources.game.getShapeRenderer().begin(ShapeRenderer.ShapeType.Filled);
         beamMainMenu.render();
-        Resources.shapeRenderer.end();
+        Resources.game.getShapeRenderer().end();
 
-        Resources.batch.begin();
+        Resources.game.getBatch().begin();
         titleElement.render();
-        Resources.batch.end();
+        Resources.game.getBatch().end();
 
         menu.render();
 

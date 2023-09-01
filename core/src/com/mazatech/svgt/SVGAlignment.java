@@ -1,6 +1,8 @@
 /****************************************************************************
-** Copyright (c) 2013-2018 Mazatech S.r.l.
+** Copyright (c) 2013-2023 Mazatech S.r.l.
 ** All rights reserved.
+** 
+** This file is part of AmanithSVG software, an SVG rendering library.
 ** 
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted (subject to the limitations in the disclaimer
@@ -38,47 +40,39 @@ package com.mazatech.svgt;
 
 public class SVGAlignment {
 
-    private SVGTAlign _align;
-    private SVGTMeetOrSlice _meetOrSlice;
+    private final SVGTAlign _align;
+    private final SVGTMeetOrSlice _meetOrSlice;
 
-    // Constructor.
     public SVGAlignment(SVGTAlign align, SVGTMeetOrSlice meetOrSlice) {
-
         _align = align;
         _meetOrSlice = meetOrSlice;
     }
 
-    public SVGAlignment(final SVGAlignment src) {
-
-        _align = src._align;
-        _meetOrSlice = src._meetOrSlice;
-    }
-
-    SVGTAlign getAlign() {
-
+    public SVGTAlign getAlign() {
         return _align;
     }
 
-    SVGTMeetOrSlice getMeetOrSlice() {
-
+    public SVGTMeetOrSlice getMeetOrSlice() {
         return _meetOrSlice;
-    }
-
-    public void set(final SVGAlignment src) {
-
-        _align = src._align;
-        _meetOrSlice = src._meetOrSlice;
     }
 
     @Override
     public int hashCode() {
-
         return _align.hashCode() ^ _meetOrSlice.hashCode();
     }
 
     @Override
     public boolean equals(Object o) {
 
-        return (!(o instanceof SVGAlignment)) ? false : (_align.equals(((SVGAlignment)o).getAlign()) && _meetOrSlice.equals(((SVGAlignment)o).getMeetOrSlice()));
+        boolean eq;
+
+        if (!(o instanceof SVGAlignment)) {
+            eq = false;
+        }
+        else {
+            eq = (_align.equals(((SVGAlignment)o).getAlign()) && _meetOrSlice.equals(((SVGAlignment)o).getMeetOrSlice()));
+        }
+
+        return eq;
     }
 }

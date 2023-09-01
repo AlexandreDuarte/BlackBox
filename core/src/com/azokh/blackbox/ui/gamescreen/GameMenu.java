@@ -23,7 +23,7 @@ public class GameMenu implements Element, BBListener, InputProcessor {
     public static final int VALIDATE_BUTTON = 1;
 
     public GameMenu() {
-        this.timer = new TimerElement(Gdx.graphics.getWidth()/2, 4*Gdx.graphics.getHeight()/5, Resources.textFont, true);
+        this.timer = new TimerElement(Gdx.graphics.getWidth()/2, 4*Resources.game.getGameHeight()/5, Resources.textFont, true);
         buttons = new ArrayList<BBButton>();
         BBButton backButton = new BBListenerButton(BACK_BUTTON, 40, 40, "BACK", Resources.textFont, this);
         //BBButton validateButton = new BBListenerButton(VALIDATE_BUTTON, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()*4/5, "VALIDATE", Resources.textFont, this, Align.center);
@@ -35,37 +35,37 @@ public class GameMenu implements Element, BBListener, InputProcessor {
     public void onClick(BBButton flb) {
         switch (flb.getId()) {
             case BACK_BUTTON:
-                Resources.game.setScreen(Resources.mainMenuScreen);
+                Resources.game.setScreen(Resources.game.getMainMenuScreen());
                 break;
         }
     }
 
     @Override
     public void render() {
-        Resources.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        Resources.game.getShapeRenderer().begin(ShapeRenderer.ShapeType.Filled);
         for(int i = 0; i < buttons.size(); i++)
         {
             BBButton b = buttons.get(i);
             if(!b.isHidden())
             {
-                //b.drawBounds(Resources.shapeRenderer);
+                //b.drawBounds(Resources.game.getShapeRenderer());
             }
         }
-        Resources.shapeRenderer.end();
+        Resources.game.getShapeRenderer().end();
 
 
 
-        Resources.batch.begin();
+        Resources.game.getBatch().begin();
         for(int i = 0; i < buttons.size(); i++)
         {
             BBButton b = buttons.get(i);
             if(!b.isHidden())
             {
-                b.draw(Resources.batch);
+                b.draw(Resources.game.getBatch());
             }
         }
         this.timer.render();
-        Resources.batch.end();
+        Resources.game.getBatch().end();
     }
 
     public TimerElement getTimer() {

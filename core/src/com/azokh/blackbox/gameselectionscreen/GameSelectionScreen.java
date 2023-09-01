@@ -38,7 +38,7 @@ public class GameSelectionScreen extends BBScreen implements ScreenSelectionInte
 
     @Override
     public void show() {
-        Resources.batch.flush();
+        Resources.game.getBatch().flush();
         Gdx.input.setInputProcessor(gameSelection);
         beamSelectionScreen = new BeamGameSelectionScreen(0, 0, Resources.beamColor1, Resources.beamColor2);
 
@@ -50,16 +50,16 @@ public class GameSelectionScreen extends BBScreen implements ScreenSelectionInte
         ScreenUtils.clear(Resources.background);
 
         beamSelectionScreen.update(delta);
-        Resources.camera.update();
-        Resources.shapeRenderer.setProjectionMatrix(Resources.camera.combined);
+        Resources.game.getCamera().update();
+        Resources.game.getShapeRenderer().setProjectionMatrix(Resources.game.getCamera().combined);
 
-        Resources.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        Resources.game.getShapeRenderer().begin(ShapeRenderer.ShapeType.Filled);
         beamSelectionScreen.render();
-        Resources.shapeRenderer.end();
+        Resources.game.getShapeRenderer().end();
 /*
-        Resources.batch.begin();
+        Resources.game.getBatch().begin();
         //titleElement.render();
-        Resources.batch.end();
+        Resources.game.getBatch().end();
 */
         gameSelection.render();
 

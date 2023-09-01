@@ -19,7 +19,7 @@ public class ObserverBoardCell extends StaticBoardCell {
     @Override
     public void render() {
         if (active) {
-            Resources.shapeRenderer.rect(bounds.x, bounds.y, bounds.width, bounds.height);
+            Resources.game.getShapeRenderer().rect(bounds.x, bounds.y, bounds.width, bounds.height);
         }
     }
 

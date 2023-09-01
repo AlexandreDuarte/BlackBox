@@ -1,28 +1,30 @@
 package com.azokh.blackbox.ui.element.button;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 
 public abstract class BBButtonShape extends BBButton {
 
-    private final Rectangle bounds;
     private boolean selected;
     private boolean hidden;
     private boolean active;
     private boolean disabled;
 
 
-    public BBButtonShape(int id, int x, int y, int width, int height) {
-        super(id);
+    public BBButtonShape(int id, float x, float y, float width, float height) {
+        super(id, x, y, width, height);
         this.hidden = false;
         this.active = false;
         this.disabled = false;
 
+    }
 
-
-        this.bounds = new Rectangle(x, Gdx.graphics.getHeight() - (y), width, height);
+    public BBButtonShape(int id) {
+        super(id);
+        this.hidden = false;
+        this.active = false;
+        this.disabled = false;
     }
 
     public void execute()

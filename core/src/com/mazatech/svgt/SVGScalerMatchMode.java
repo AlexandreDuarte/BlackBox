@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2018 Mazatech S.r.l.
+** Copyright (c) 2013-2023 Mazatech S.r.l.
 ** All rights reserved.
 ** 
 ** Redistribution and use in source and binary forms, with or without
@@ -71,5 +71,5 @@ public enum SVGScalerMatchMode {
     }
 
     private final int _internalEnum;
-    private static SVGScalerMatchMode[] _allValues = values();
+    private static final SVGScalerMatchMode[] _allValues = values();
 }

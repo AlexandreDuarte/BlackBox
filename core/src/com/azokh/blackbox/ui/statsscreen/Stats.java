@@ -8,7 +8,7 @@ import com.azokh.blackbox.ui.element.button.BBButtonLeftArrow;
 import com.azokh.blackbox.ui.element.button.BBButtonRightArrow;
 import com.azokh.blackbox.ui.element.button.BBListener;
 import com.azokh.blackbox.ui.element.button.BBListenerButton;
-import com.azokh.blackbox.ui.element.carousel.Carousel;
+import com.azokh.blackbox.utils.ListCarousel;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
@@ -45,7 +45,7 @@ public class Stats implements Element, BBListener, InputProcessor {
 
     GlyphLayout currentStatViewTitle;
 
-    ListIterator<StatViews> carousel = (new Carousel<StatViews>(currentStatView)).iterator();
+    ListIterator<StatViews> carousel = (new ListCarousel<StatViews>(currentStatView)).iterator();
 
     public Stats(ScreenSelectionInterface screenSelectionInterface) {
         this.screenSelectionInterface = screenSelectionInterface;
@@ -54,9 +54,9 @@ public class Stats implements Element, BBListener, InputProcessor {
 
 
         buttons = new ArrayList<>();
-        BBButtonLeftArrow leftButton = new BBButtonLeftArrow(LEFT_BUTTON, Gdx.graphics.getWidth() / 5, Gdx.graphics.getHeight() / 5 + (int)currentStatViewTitle.height, Gdx.graphics.getWidth()/10, Gdx.graphics.getWidth()/10, this);
-        BBButtonRightArrow rightButton = new BBButtonRightArrow(RIGHT_BUTTON, 4*Gdx.graphics.getWidth() / 5, Gdx.graphics.getHeight() / 5 + (int)currentStatViewTitle.height, Gdx.graphics.getWidth()/10, Gdx.graphics.getWidth()/10, this);
-        //BBButton exitButton = new BBListenerButton(ABOUT_BUTTON, Gdx.graphics.getWidth() / 2 - offset - 80, Gdx.graphics.getHeight() / 2 + (int)(5*startButton.height()/4) + (int)(5*statsButton.height()/4), "ABOUT", Resources.textFont, this, Align.right);
+        BBButtonLeftArrow leftButton = new BBButtonLeftArrow(LEFT_BUTTON, Gdx.graphics.getWidth() / 5, Resources.game.getGameHeight() / 5 + (int)currentStatViewTitle.height, this);
+        BBButtonRightArrow rightButton = new BBButtonRightArrow(RIGHT_BUTTON, 4*Gdx.graphics.getWidth() / 5, Resources.game.getGameHeight() / 5 + (int)currentStatViewTitle.height, this);
+        //BBButton exitButton = new BBListenerButton(ABOUT_BUTTON, Gdx.graphics.getWidth() / 2 - offset - 80, Resources.game.getGameHeight() / 2 + (int)(5*startButton.height()/4) + (int)(5*statsButton.height()/4), "ABOUT", Resources.textFont, this, Align.right);
         BBButton backButton = new BBListenerButton(BACK_BUTTON, 40, 40, "BACK", Resources.textFont, this);
 
 
@@ -81,7 +81,7 @@ public class Stats implements Element, BBListener, InputProcessor {
                 currentStatViewTitle.setText(Resources.menuFont, currentStatView.getTitle());
                 break;
             case BACK_BUTTON:
-                screenSelectionInterface.setNextScreen(Resources.mainMenuScreen);
+                screenSelectionInterface.setNextScreen(Resources.game.getMainMenuScreen());
                 break;
             case GOOGLE_PLAY_BUTTON:
                 Gdx.app.log("GPGS", "Attempted to start logIn sequence");
@@ -93,32 +93,32 @@ public class Stats implements Element, BBListener, InputProcessor {
 
     @Override
     public void render() {
-        Resources.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        Resources.game.getShapeRenderer().begin(ShapeRenderer.ShapeType.Filled);
         for(int i = 0; i < buttons.size(); i++)
         {
             BBButton b = buttons.get(i);
             if(!b.isHidden())
             {
-                //b.drawBounds(Resources.shapeRenderer);
-                b.draw(Resources.shapeRenderer);
+                //b.drawBounds(Resources.game.getShapeRenderer());
+                b.draw(Resources.game.getShapeRenderer());
             }
         }
-        Resources.shapeRenderer.end();
+        Resources.game.getShapeRenderer().end();
 
 
 
-        Resources.batch.begin();
+        Resources.game.getBatch().begin();
         for(int i = 0; i < buttons.size(); i++)
         {
             BBButton b = buttons.get(i);
             if(!b.isHidden())
             {
-                b.draw(Resources.batch);
+                b.draw(Resources.game.getBatch());
             }
         }
-        Resources.menuFont.draw(Resources.batch, currentStatViewTitle, Gdx.graphics.getWidth()/2.0f - currentStatViewTitle.width/2, 4.0f*Gdx.graphics.getHeight()/5.0f);
+        Resources.menuFont.draw(Resources.game.getBatch(), currentStatViewTitle, Gdx.graphics.getWidth()/2.0f - currentStatViewTitle.width/2, 4.0f*Resources.game.getGameHeight()/5.0f);
 
-        Resources.batch.end();
+        Resources.game.getBatch().end();
 
     }
 

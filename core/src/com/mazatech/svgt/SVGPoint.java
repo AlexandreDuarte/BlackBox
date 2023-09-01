@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2018 Mazatech S.r.l.
+** Copyright (c) 2013-2023 Mazatech S.r.l.
 ** All rights reserved.
 ** 
 ** Redistribution and use in source and binary forms, with or without
@@ -38,8 +38,6 @@ package com.mazatech.svgt;
 
 public class SVGPoint {
 
-    public static final SVGPoint Zero = new SVGPoint(0, 0);
-
     // Constructor.
     public SVGPoint() {
 
@@ -52,12 +50,14 @@ public class SVGPoint {
     }
 
     // Set constructor.
-    public SVGPoint(float x, float y) {
+    public SVGPoint(float x,
+                    float y) {
 
         set(x, y);
     }
 
-    public void set(float x, float y) {
+    public void set(float x,
+                    float y) {
 
         _x = x;
         _y = y;
@@ -87,4 +87,5 @@ public class SVGPoint {
 
     private float _x;
     private float _y;
+    public static final SVGPoint Zero = new SVGPoint(0, 0);
 }

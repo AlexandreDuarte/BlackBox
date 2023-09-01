@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2018 Mazatech S.r.l.
+** Copyright (c) 2013-2023 Mazatech S.r.l.
 ** All rights reserved.
 ** 
 ** Redistribution and use in source and binary forms, with or without
@@ -38,24 +38,30 @@ package com.mazatech.svgt;
 
 public class SVGDocument {
 
-    public SVGDocument(int handle) {
+    SVGDocument(int handle) {
 
-        SVGTError err;
         float[] viewport = new float[4];
 
         _doc = new SVGTHandle(handle);
         // get document viewport
-        if ((err = AmanithSVG.svgtDocViewportGet(_doc, viewport)) == SVGTError.None) {
+        if (AmanithSVG.svgtDocViewportGet(_doc, viewport) == SVGTError.None) {
             _viewport = new SVGViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
             // get viewport aspect ratio/alignment
-            _aspectRatio = AmanithSVG.svgtDocViewportAlignmentGet(_doc);
+            int[] aspectRatio = AmanithSVG.svgtDocViewportAlignmentGet(_doc);
+            if (aspectRatio != null) {
+                _aspectRatio = new SVGAlignment(SVGTAlign.fromValue(aspectRatio[0]), SVGTMeetOrSlice.fromValue(aspectRatio[1]));
+            }
         }
     }
 
     public void dispose() {
 
         // dispose unmanaged resources
-        AmanithSVG.svgtDocDestroy(_doc);
+        if (AmanithSVG.svgtDocDestroy(_doc) != SVGTError.None) {
+            // if we get an error here, it is highly likely that the code is being executed by
+            // a thread other than the one in which the document was created (i.e. in a thread
+            // different than the rendering thread)
+        }
         _doc = null;
     }
 
@@ -80,9 +86,7 @@ public class SVGDocument {
             if (updateViewport() == SVGTError.None) {
                 // update surface viewport (AmanithSVG backend)
                 if (surface.updateViewport() == SVGTError.None) {
-
                     float[] dst = new float[2];
-
                     // map the specified point
                     if (AmanithSVG.svgtPointMap(_doc, surface.getHandle(), p.getX(), p.getY(), dst) == SVGTError.None) {
                         result.set(dst[0], dst[1]);
@@ -106,10 +110,11 @@ public class SVGDocument {
         the content via the 'width' and 'height' XML attributes on the outermost <svg> element.
         Use this method to get the suggested viewport width, in pixels.
 
-        It returns -1 (i.e. an invalid width) in the following cases:
+        It returns a negative number (i.e. an invalid width) in the following cases:
         - the library has not previously been initialized through the svgtInit function
         - outermost element is not an <svg> element
         - outermost <svg> element doesn't have a 'width' attribute specified
+        - outermost <svg> element has a negative 'width' attribute specified (e.g. width="-50")
         - outermost <svg> element has a 'width' attribute specified in relative measure units (i.e. em, ex, % percentage)
     */
     public float getWidth() {
@@ -122,10 +127,11 @@ public class SVGDocument {
         the content via the 'width' and 'height' XML attributes on the outermost <svg> element.
         Use this method to get the suggested viewport height, in pixels.
 
-        It returns -1 (i.e. an invalid height) in the following cases:
+        It returns a negative number (i.e. an invalid height) in the following cases:
         - the library has not previously been initialized through the svgtInit function
         - outermost element is not an <svg> element
         - outermost <svg> element doesn't have a 'height' attribute specified
+        - outermost <svg> element has a negative 'height' attribute specified (e.g. height="-30")
         - outermost <svg> element has a 'height' attribute specified in relative measure units (i.e. em, ex, % percentage)
     */
     public float getHeight() {
@@ -169,8 +175,14 @@ public class SVGDocument {
             throw new IllegalArgumentException("aspectRatio == null");
         }
         else {
-            _aspectRatio.set(aspectRatio);
+            _aspectRatio = new SVGAlignment(aspectRatio.getAlign(), aspectRatio.getMeetOrSlice());
         }
+    }
+
+    public void setAspectRatio(SVGTAlign align,
+                               SVGTMeetOrSlice meetOrSlice) {
+
+        setAspectRatio(new SVGAlignment(align, meetOrSlice));
     }
 
     // If needed, update surface viewport at AmanithSVG backend side
@@ -192,7 +204,7 @@ public class SVGDocument {
         if (err == SVGTError.None) {
             if (_aspectRatio != null) {
                 // set document viewport aspect ratio/alignment (AmanithSVG backend)
-                err = AmanithSVG.svgtDocViewportAlignmentSet(_doc, _aspectRatio);
+                err = AmanithSVG.svgtDocViewportAlignmentSet(_doc, _aspectRatio.getAlign(), _aspectRatio.getMeetOrSlice());
             }
         }
 
@@ -200,7 +212,7 @@ public class SVGDocument {
     }
 
     // Document native handle.
-    private SVGTHandle _doc = null;
+    private SVGTHandle _doc;
     // Viewport.
     private SVGViewport _viewport = null;
     // Viewport aspect ratio/alignment.

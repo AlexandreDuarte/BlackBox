@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2018 Mazatech S.r.l.
+** Copyright (c) 2013-2023 Mazatech S.r.l.
 ** All rights reserved.
 ** 
 ** Redistribution and use in source and binary forms, with or without
@@ -64,17 +64,23 @@ public class SVGViewport {
     }
 
     // Set constructor.
-    public SVGViewport(float x, float y, float width, float height) {
+    public SVGViewport(float x,
+                       float y,
+                       float width,
+                       float height) {
 
         set(x, y, width, height);
     }
 
-    public void set(float x, float y, float width, float height) {
+    public void set(float x,
+                    float y,
+                    float width,
+                    float height) {
 
         _x = x;
         _y = y;
-        _width = (width < 0.0f) ? 0.0f : width;
-        _height = (height < 0.0f) ? 0.0f : height;
+        _width = Math.max(width, 0.0f);
+        _height = Math.max(height, 0.0f);
         _changed = true;
     }
 
@@ -110,7 +116,7 @@ public class SVGViewport {
 
     public void setWidth(float width) {
 
-        _width = (width < 0.0f) ? 0.0f : width;
+        _width = Math.max(width, 0.0f);
         _changed = true;
     }
 
@@ -122,7 +128,7 @@ public class SVGViewport {
 
     public void setHeight(float height) {
 
-        _height = (height < 0.0f) ? 0.0f : height;
+        _height = Math.max(height, 0.0f);
         _changed = true;
     }
 

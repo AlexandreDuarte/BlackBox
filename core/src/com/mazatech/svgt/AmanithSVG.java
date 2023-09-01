@@ -1,6 +1,8 @@
 /****************************************************************************
-** Copyright (c) 2013-2018 Mazatech S.r.l.
+** Copyright (c) 2013-2023 Mazatech S.r.l.
 ** All rights reserved.
+** 
+** This file is part of AmanithSVG software, an SVG rendering library.
 ** 
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted (subject to the limitations in the disclaimer
@@ -36,140 +38,9 @@
 
 package com.mazatech.svgt;
 
+import java.util.EnumSet;
+
 public class AmanithSVG {
-
-    public static int SVGT_INVALID_HANDLE                               = 0;
-
-    // SVGTboolean
-    public static final int SVGT_FALSE                                  = 0;
-    public static final int SVGT_TRUE                                   = 1;
-
-    // -----------------------------------------------------------------------------------------------------------------------------------
-    // SVGTAspectRatioAlign
-    //
-    // Alignment indicates whether to force uniform scaling and, if so, the alignment method to use in case the aspect ratio of the source
-    // viewport doesn't match the aspect ratio of the destination (drawing surface) viewport.
-    // -----------------------------------------------------------------------------------------------------------------------------------
-    /*
-        Do not force uniform scaling.
-        Scale the graphic content of the given element non-uniformly if necessary such that
-        the element's bounding box exactly matches the viewport rectangle.
-        NB: in this case, the <meetOrSlice> value is ignored.
-    */
-    public static final int SVGT_ASPECT_RATIO_ALIGN_NONE                = 0;
-    /*
-        Force uniform scaling.
-        Align the <min-x> of the source viewport with the smallest x value of the destination (drawing surface) viewport.
-        Align the <min-y> of the source viewport with the smallest y value of the destination (drawing surface) viewport.
-    */
-    public static final int SVGT_ASPECT_RATIO_ALIGN_XMINYMIN            = 1;
-    /*
-        Force uniform scaling.
-        Align the <mid-x> of the source viewport with the midpoint x value of the destination (drawing surface) viewport.
-        Align the <min-y> of the source viewport with the smallest y value of the destination (drawing surface) viewport.
-    */
-    public static final int SVGT_ASPECT_RATIO_ALIGN_XMIDYMIN            = 2;
-    /*
-        Force uniform scaling.
-        Align the <max-x> of the source viewport with the maximum x value of the destination (drawing surface) viewport.
-        Align the <min-y> of the source viewport with the smallest y value of the destination (drawing surface) viewport.
-    */
-    public static final int SVGT_ASPECT_RATIO_ALIGN_XMAXYMIN            = 3;
-    /*
-        Force uniform scaling.
-        Align the <min-x> of the source viewport with the smallest x value of the destination (drawing surface) viewport.
-        Align the <mid-y> of the source viewport with the midpoint y value of the destination (drawing surface) viewport.
-    */
-    public static final int SVGT_ASPECT_RATIO_ALIGN_XMINYMID            = 4;
-    /*
-        Force uniform scaling.
-        Align the <mid-x> of the source viewport with the midpoint x value of the destination (drawing surface) viewport.
-        Align the <mid-y> of the source viewport with the midpoint y value of the destination (drawing surface) viewport.
-    */
-    public static final int SVGT_ASPECT_RATIO_ALIGN_XMIDYMID            = 5;
-    /*
-        Force uniform scaling.
-        Align the <max-x> of the source viewport with the maximum x value of the destination (drawing surface) viewport.
-        Align the <mid-y> of the source viewport with the midpoint y value of the destination (drawing surface) viewport.
-    */
-    public static final int SVGT_ASPECT_RATIO_ALIGN_XMAXYMID            = 6;
-    /*
-        Force uniform scaling.
-        Align the <min-x> of the source viewport with the smallest x value of the destination (drawing surface) viewport.
-        Align the <max-y> of the source viewport with the maximum y value of the destination (drawing surface) viewport.
-    */
-    public static final int SVGT_ASPECT_RATIO_ALIGN_XMINYMAX            = 7;
-    /*
-        Force uniform scaling.
-        Align the <mid-x> of the source viewport with the midpoint x value of the destination (drawing surface) viewport.
-        Align the <max-y> of the source viewport with the maximum y value of the destination (drawing surface) viewport.
-    */
-    public static final int SVGT_ASPECT_RATIO_ALIGN_XMIDYMAX            = 8;
-    /*
-        Force uniform scaling.
-        Align the <max-x> of the source viewport with the maximum x value of the destination (drawing surface) viewport.
-        Align the <max-y> of the source viewport with the maximum y value of the destination (drawing surface) viewport.
-    */
-    public static final int SVGT_ASPECT_RATIO_ALIGN_XMAXYMAX            = 9;
-
-    // -----------------------------------------------------------------------------------------------------------------------------------
-    // SVGTAspectRatioMeetOrSlice
-    // -----------------------------------------------------------------------------------------------------------------------------------
-    /*
-        Scale the graphic such that:
-        - aspect ratio is preserved
-        - the entire viewBox is visible within the viewport
-        - the viewBox is scaled up as much as possible, while still meeting the other criteria
-
-        In this case, if the aspect ratio of the graphic does not match the viewport, some of the viewport will
-        extend beyond the bounds of the viewBox (i.e., the area into which the viewBox will draw will be smaller
-        than the viewport).
-    */
-    public static final int SVGT_ASPECT_RATIO_MEET                      = 0;
-    /*
-        Scale the graphic such that:
-        - aspect ratio is preserved
-        - the entire viewport is covered by the viewBox
-        - the viewBox is scaled down as much as possible, while still meeting the other criteria
-        
-        In this case, if the aspect ratio of the viewBox does not match the viewport, some of the viewBox will
-        extend beyond the bounds of the viewport (i.e., the area into which the viewBox will draw is larger
-        than the viewport).
-    */
-    public static final int SVGT_ASPECT_RATIO_SLICE                     = 1;
-
-    // -----------------------------------------------------------------------------------------------------------------------------------
-    // SVGTErrorCode
-    // -----------------------------------------------------------------------------------------------------------------------------------
-    public static final int SVGT_NO_ERROR                               = 0;
-    // it indicates that the library has not previously been initialized through the svgtInit() function
-    public static final int SVGT_NOT_INITIALIZED_ERROR                  = 1;
-    public static final int SVGT_BAD_HANDLE_ERROR                       = 2;
-    public static final int SVGT_ILLEGAL_ARGUMENT_ERROR                 = 3;
-    public static final int SVGT_OUT_OF_MEMORY_ERROR                    = 4;
-    public static final int SVGT_PARSER_ERROR                           = 5;
-    // returned when the library detects that outermost element is not an <svg> element or there is a circular dependency (usually generated by <use> elements)
-    public static final int SVGT_INVALID_SVG_ERROR                      = 6;
-    public static final int SVGT_STILL_PACKING_ERROR                    = 7;
-    public static final int SVGT_NOT_PACKING_ERROR                      = 8;
-    public static final int SVGT_UNKNOWN_ERROR                          = 9;
-
-    // -----------------------------------------------------------------------------------------------------------------------------------
-    // SVGTRenderingQuality
-    // -----------------------------------------------------------------------------------------------------------------------------------
-    /* disables antialiasing */
-    public static final int SVGT_RENDERING_QUALITY_NONANTIALIASED       = 0;
-    /* causes rendering to be done at the highest available speed */
-    public static final int SVGT_RENDERING_QUALITY_FASTER               = 1;
-    /* causes rendering to be done with the highest available quality */
-    public static final int SVGT_RENDERING_QUALITY_BETTER               = 2;
-
-    // -----------------------------------------------------------------------------------------------------------------------------------
-    // SVGTStringID
-    // -----------------------------------------------------------------------------------------------------------------------------------
-    public static final int SVGT_VENDOR                                 = 1;
-    public static final int SVGT_VERSION                                = 2;
-
 
     /*-------------------------------------------------------------------------------
                             Utility for common error checking
@@ -204,9 +75,20 @@ public class AmanithSVG {
         }
     }
 
+    private static int boolToInt(boolean b) {
+
+        return (b ? AmanithSVGJNI.SVGT_TRUE : AmanithSVGJNI.SVGT_FALSE);
+    }
+
     /*-------------------------------------------------------------------------------
                                  API implementation
     -------------------------------------------------------------------------------*/
+    // Retrieve the error code generated by the last called API function.
+    public static SVGTError svgtGetLastError() {
+
+        return SVGTError.fromValue(AmanithSVGJNI.svgtGetLastError());
+    }
+
     // Initialize the library.
     public static SVGTError svgtInit(int screenWidth, int screenHeight, float dpi) {
 
@@ -231,10 +113,111 @@ public class AmanithSVG {
         AmanithSVGJNI.svgtDone();
     }
 
+    // Configure parameters and thresholds for the AmanithSVG library.
+    public static SVGTError svgtConfigSet(SVGTConfig config, float value) {
+
+        // check arguments
+        if (config == null) {
+            throw new IllegalArgumentException("config == null");
+        }
+
+        return SVGTError.fromValue(AmanithSVGJNI.svgtConfigSet(config.getValue(), value));
+    }
+
+    // Get the current value relative to the specified configuration parameter.
+    public static float svgtConfigGet(SVGTConfig config) {
+
+        // check arguments
+        if (config == null) {
+            throw new IllegalArgumentException("config == null");
+        }
+
+        return AmanithSVGJNI.svgtConfigGet(config.getValue());
+    }
+
+    // Set the system / user-agent language.
+    public static SVGTError svgtLanguageSet(final String languages) {
+
+        return SVGTError.fromValue(AmanithSVGJNI.svgtLanguageSet(languages));
+    }
+
+    // Instruct the library about an external resource.
+    public static SVGTError svgtResourceSet(final String id, final java.nio.ByteBuffer buffer, SVGTResourceType type, final EnumSet<SVGTResourceHint> hints) {
+
+        // check arguments
+        if (buffer == null) {
+            throw new IllegalArgumentException("buffer == null");
+        }
+        if (!buffer.isDirect()) {
+            // NB: the given buffer must be direct, because we want to be sure that its address won't change
+            // Direct buffers have this peculiarity: once allocated, their memory address is fixed for
+            // the lifetime of the buffer.
+            throw new IllegalArgumentException("buffer is not 'direct'");
+        }
+        if (buffer.capacity() <= 0) {
+            throw new IllegalArgumentException("buffer.capacity <= 0");
+        }
+
+        // 'buffer' must point to a read-only area containing the resource file.
+        // Such read-only buffer must be a valid and immutable memory area throughout the whole life
+        // of the application that uses the library. In multi-thread applications the 'buffer' memory
+        // must be accessible (readable) by all threads.
+        return SVGTError.fromValue(AmanithSVGJNI.svgtResourceSet(id, buffer, type.getValue(), SVGTResourceHint.getBitfield(hints)));
+    }
+
+    // Get the maximum number of different threads that can "work" (e.g. create surfaces, create documents and draw them) concurrently.
+    public static int svgtMaxCurrentThreads() {
+
+        return AmanithSVGJNI.svgtMaxCurrentThreads();
+    }
+
     // Get the maximum dimension allowed for drawing surfaces.
     public static int svgtSurfaceMaxDimension() {
 
         return AmanithSVGJNI.svgtSurfaceMaxDimension();
+    }
+
+    // Set the log buffer for the current thread.
+    public static SVGTError svgtLogBufferSet(java.nio.ByteBuffer logBuffer, final EnumSet<SVGTLogLevel> logLevel) {
+
+        // check arguments
+        if (logBuffer != null) {
+            if (!logBuffer.isDirect()) {
+                // NB: the given buffer must be direct, because we want to be sure that its address won't change
+                // Direct buffers have this peculiarity: once allocated, their memory address is fixed for
+                // the lifetime of the buffer.
+                throw new IllegalArgumentException("logBuffer is not 'direct'");
+            }
+            if (logBuffer.capacity() <= 0) {
+                throw new IllegalArgumentException("logBuffer.capacity <= 0");
+            }
+        }
+
+        return SVGTError.fromValue(AmanithSVGJNI.svgtLogBufferSet(logBuffer, SVGTLogLevel.getBitfield(logLevel)));
+    }
+
+    // Append the given message to the log buffer.
+    public static SVGTError svgtLogPrint(final String message, SVGTLogLevel level) {
+
+        // check arguments
+        if (message == null) {
+            throw new IllegalArgumentException("message == null");
+        }
+
+        return SVGTError.fromValue(AmanithSVGJNI.svgtLogPrint(message, level.getValue()));
+    }
+
+    // Get information about the current thread log buffer.
+    public static SVGTError svgtLogBufferInfo(int[] info, int offset) {
+
+        checkArrayLength(4, info, offset);
+
+        return SVGTError.fromValue(AmanithSVGJNI.svgtLogBufferInfo(info, offset));
+    }
+
+    public static SVGTError svgtLogBufferInfo(int[] info) {
+
+        return svgtLogBufferInfo(info, 0);
     }
 
     // Create a new drawing surface, specifying its dimensions in pixels.
@@ -252,7 +235,7 @@ public class AmanithSVG {
         }
 
         handle = AmanithSVGJNI.svgtSurfaceCreate(width, height);
-        return (handle == SVGT_INVALID_HANDLE) ? null : new SVGTHandle(handle);
+        return (handle == AmanithSVGJNI.SVGT_INVALID_HANDLE) ? null : new SVGTHandle(handle);
     }
 
     // Destroy a previously created drawing surface.
@@ -262,6 +245,7 @@ public class AmanithSVG {
         if (surface == null) {
             throw new IllegalArgumentException("surface == null");
         }
+
         return SVGTError.fromValue(AmanithSVGJNI.svgtSurfaceDestroy(surface.getNativeHandle()));
     }
 
@@ -276,8 +260,6 @@ public class AmanithSVG {
         if (newHeight < 0) {
             throw new IllegalArgumentException("newHeight < 0");
         }
-
-        // check arguments
         if (surface == null) {
             throw new IllegalArgumentException("surface == null");
         }
@@ -310,13 +292,19 @@ public class AmanithSVG {
     // Get access to the drawing surface pixels.
     public static java.nio.ByteBuffer svgtSurfacePixels(SVGTHandle surface) {
 
+        // check arguments
+        if (surface == null) {
+            throw new IllegalArgumentException("surface == null");
+        }
+
+        // NB: the returned buffer is a direct buffer referring to the surface pixels memory
         return AmanithSVGJNI.svgtSurfacePixels(surface.getNativeHandle());
     }
 
     // Copy drawing surface content into the specified pixels array.
     public static SVGTError svgtSurfaceCopy(SVGTHandle surface, int[] dstPixels32, int offset, boolean redBlueSwap, boolean dilateEdgesFix) {
 
-        int srfWidth, srfHeight;
+        int srfWidth, srfHeight, err;
 
         // check arguments
         if (surface == null) {
@@ -328,7 +316,7 @@ public class AmanithSVG {
         srfHeight = AmanithSVGJNI.svgtSurfaceHeight(surface.getNativeHandle());
         checkArrayLength(srfWidth * srfHeight, dstPixels32, offset);
         // perform the real copy
-        return SVGTError.fromValue(AmanithSVGJNI.svgtSurfaceCopyA(surface.getNativeHandle(), dstPixels32, offset, (redBlueSwap ? SVGT_TRUE : SVGT_FALSE), (dilateEdgesFix ? SVGT_TRUE : SVGT_FALSE)));
+        return SVGTError.fromValue(AmanithSVGJNI.svgtSurfaceCopyA(surface.getNativeHandle(), dstPixels32, offset, boolToInt(redBlueSwap), boolToInt(dilateEdgesFix)));
     }
 
     public static SVGTError svgtSurfaceCopy(SVGTHandle surface, int[] dstPixels32, boolean redBlueSwap, boolean dilateEdgesFix) {
@@ -351,13 +339,13 @@ public class AmanithSVG {
         // get surface dimensions
         srfWidth = AmanithSVGJNI.svgtSurfaceWidth(surface.getNativeHandle());
         srfHeight = AmanithSVGJNI.svgtSurfaceHeight(surface.getNativeHandle());
-        if (dstPixels32.capacity() < srfWidth * srfHeight) {
+        if (dstPixels32.capacity() < (srfWidth * srfHeight)) {
             throw new IllegalArgumentException("buffer capacity is not enough (dstPixels32)");
         }
 
         if (dstPixels32.isDirect()) {
             // the buffer is a direct buffer
-            return SVGTError.fromValue(AmanithSVGJNI.svgtSurfaceCopyB(surface.getNativeHandle(), dstPixels32, (redBlueSwap ? SVGT_TRUE : SVGT_FALSE), (dilateEdgesFix ? SVGT_TRUE : SVGT_FALSE)));
+            return SVGTError.fromValue(AmanithSVGJNI.svgtSurfaceCopyB(surface.getNativeHandle(), dstPixels32, boolToInt(redBlueSwap), boolToInt(dilateEdgesFix)));
         }
         else {
             // the buffer is backed by an array
@@ -400,18 +388,29 @@ public class AmanithSVG {
         return svgtSurfaceViewportSet(surface, viewport, 0);
     }
 
+    // Clear the whole drawing surface with the given color.
+    public static SVGTError svgtSurfaceClear(SVGTHandle surface, float r, float g, float b, float a) {
+
+        // check arguments
+        if (surface == null) {
+            throw new IllegalArgumentException("surface == null");
+        }
+
+        return SVGTError.fromValue(AmanithSVGJNI.svgtSurfaceClear(surface.getNativeHandle(), r, g, b, a));
+    }
+
     // Create and load an SVG document, specifying the whole xml string.
     public static SVGTHandle svgtDocCreate(final String xmlText) {
 
         int handle;
 
         // check arguments
-        if (xmlText == null || xmlText.length() < 1) {
+        if ((xmlText == null) || (xmlText.length() < 1)) {
             throw new IllegalArgumentException("xmlText is null or empty!");
         }
 
         handle = AmanithSVGJNI.svgtDocCreate(xmlText);
-        return (handle == SVGT_INVALID_HANDLE) ? null : new SVGTHandle(handle);
+        return (handle == AmanithSVGJNI.SVGT_INVALID_HANDLE) ? null : new SVGTHandle(handle);
     }
 
     // Destroy a previously created SVG document.
@@ -481,22 +480,34 @@ public class AmanithSVG {
     }
 
     // Get the document alignment: it indicates whether to force uniform scaling and, if so, the alignment method to use.
-    public static SVGAlignment svgtDocViewportAlignmentGet(SVGTHandle svgDoc) {
+    // Return value is [0] = SVGTAlign, [1] = SVGTMeetOrSlice
+    public static int[] svgtDocViewportAlignmentGet(SVGTHandle svgDoc) {
 
         // check arguments
         if (svgDoc == null) {
             throw new IllegalArgumentException("svgDoc == null");
         }
 
-        int values[] = new int[2];
+        int[] values = new int[2];
         int err = AmanithSVGJNI.svgtDocViewportAlignmentGet(svgDoc.getNativeHandle(), values, 0);
-        return (err == SVGT_NO_ERROR) ? new SVGAlignment(SVGTAlign.fromValue(values[0]), SVGTMeetOrSlice.fromValue(values[1])) : null;
+        return (err == AmanithSVGJNI.SVGT_NO_ERROR) ? values : null;
     }
 
     // Set the document alignment: it indicates whether to force uniform scaling and, if so, the alignment method to use.
     public static SVGTError svgtDocViewportAlignmentSet(SVGTHandle svgDoc, SVGTAlign align, SVGTMeetOrSlice meetOrSlice) {
 
-        int values[] = new int[] {
+        // check arguments
+        if (svgDoc == null) {
+            throw new IllegalArgumentException("svgDoc == null");
+        }
+        if (align == null) {
+            throw new IllegalArgumentException("align == null");
+        }
+        if (meetOrSlice == null) {
+            throw new IllegalArgumentException("meetOrSlice == null");
+        }
+
+        int[] values = new int[] {
             align.getValue(),
             meetOrSlice.getValue()
         };
@@ -504,38 +515,18 @@ public class AmanithSVG {
         return SVGTError.fromValue(AmanithSVGJNI.svgtDocViewportAlignmentSet(svgDoc.getNativeHandle(), values, 0));
     }
 
-    public static SVGTError svgtDocViewportAlignmentSet(SVGTHandle svgDoc, SVGAlignment alignment) {
-
-        return svgtDocViewportAlignmentSet(svgDoc, alignment.getAlign(), alignment.getMeetOrSlice());
-    }
-
     // Draw an SVG document, on the specified drawing surface, with the given rendering quality.
     public static SVGTError svgtDocDraw(SVGTHandle svgDoc, SVGTHandle surface, SVGTRenderingQuality renderingQuality) {
 
         // check arguments
+        if (svgDoc == null) {
+            throw new IllegalArgumentException("svgDoc == null");
+        }
         if (surface == null) {
             throw new IllegalArgumentException("surface == null");
         }
-        // if the specified SVG document is null / SVGT_INVALID_HANDLE, the drawing surface is cleared (or not)
-        // according to the current settings (see svgtClearColor and svgtClearPerform), and nothing else is drawn
-        if (svgDoc == null) {
-            return SVGTError.fromValue(AmanithSVGJNI.svgtDocDraw(SVGT_INVALID_HANDLE, surface.getNativeHandle(), renderingQuality.getValue()));
-        }
-        else {
-            return SVGTError.fromValue(AmanithSVGJNI.svgtDocDraw(svgDoc.getNativeHandle(), surface.getNativeHandle(), renderingQuality.getValue()));
-        }
-    }
 
-    // Set the clear color (i.e. the color used to clear the whole drawing surface).
-    public static SVGTError svgtClearColor(float r, float g, float b, float a) {
-
-        return SVGTError.fromValue(AmanithSVGJNI.svgtClearColor(r, g, b, a));
-    }
-
-    // Specify if the whole drawing surface must be cleared by the svgtDocDraw function, before to draw the SVG document.
-    public static SVGTError svgtClearPerform(boolean doClear) {
-
-        return SVGTError.fromValue(AmanithSVGJNI.svgtClearPerform((doClear ? SVGT_TRUE : SVGT_FALSE)));
+        return SVGTError.fromValue(AmanithSVGJNI.svgtDocDraw(svgDoc.getNativeHandle(), surface.getNativeHandle(), renderingQuality.getValue()));
     }
 
     // Map a point, expressed in the document viewport system, into the surface viewport.
@@ -570,7 +561,7 @@ public class AmanithSVG {
             throw new IllegalArgumentException("border < 0");
         }
 
-        return SVGTError.fromValue(AmanithSVGJNI.svgtPackingBegin(maxDimension, border, (pow2Bins ? SVGT_TRUE : SVGT_FALSE), scale));
+        return SVGTError.fromValue(AmanithSVGJNI.svgtPackingBegin(maxDimension, border, boolToInt(pow2Bins), scale));
     }
 
     // Add an SVG document to the current packing task.
@@ -582,7 +573,7 @@ public class AmanithSVG {
         }
 
         checkArrayLength(2, info, offset);
-        return SVGTError.fromValue(AmanithSVGJNI.svgtPackingAdd(svgDoc.getNativeHandle(), (explodeGroups ? SVGT_TRUE : SVGT_FALSE), scale, info, offset));
+        return SVGTError.fromValue(AmanithSVGJNI.svgtPackingAdd(svgDoc.getNativeHandle(), boolToInt(explodeGroups), scale, info, offset));
     }
 
     public static SVGTError svgtPackingAdd(SVGTHandle svgDoc, boolean explodeGroups, float scale, int[] info) {
@@ -593,7 +584,7 @@ public class AmanithSVG {
     // Close the current packing task and, if specified, perform the real packing algorithm.
     public static SVGTError svgtPackingEnd(boolean performPacking) {
 
-        return SVGTError.fromValue(AmanithSVGJNI.svgtPackingEnd((performPacking ? SVGT_TRUE : SVGT_FALSE)));
+        return SVGTError.fromValue(AmanithSVGJNI.svgtPackingEnd(boolToInt(performPacking)));
     }
 
     // Return the number of generated bins from the last packing task.
@@ -672,9 +663,14 @@ public class AmanithSVG {
     }
 
     // Get renderer and version information.
-    public static String svgtGetString(int name) {
+    public static String svgtGetString(SVGTStringID name) {
 
-        return ((name != SVGT_VENDOR) && (name != SVGT_VERSION)) ? "" : AmanithSVGJNI.svgtGetString(name);
+        // check arguments
+        if (name == null) {
+            throw new IllegalArgumentException("name == null");
+        }
+
+        return AmanithSVGJNI.svgtGetString(name.getValue());
     }
 
     //------------------------------------------------------------------------------------------

@@ -1,3 +1,38 @@
+/****************************************************************************
+ ** Copyright (c) 2013-2023 Mazatech S.r.l.
+ ** All rights reserved.
+ **
+ ** Redistribution and use in source and binary forms, with or without
+ ** modification, are permitted (subject to the limitations in the disclaimer
+ ** below) provided that the following conditions are met:
+ **
+ ** - Redistributions of source code must retain the above copyright notice,
+ **   this list of conditions and the following disclaimer.
+ **
+ ** - Redistributions in binary form must reproduce the above copyright notice,
+ **   this list of conditions and the following disclaimer in the documentation
+ **   and/or other materials provided with the distribution.
+ **
+ ** - Neither the name of Mazatech S.r.l. nor the names of its contributors
+ **   may be used to endorse or promote products derived from this software
+ **   without specific prior written permission.
+ **
+ ** NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED
+ ** BY THIS LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+ ** CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT
+ ** NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ ** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER
+ ** OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ ** EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ ** PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ ** OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ ** WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ ** OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ ** ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ** For any information, please contact info@mazatech.com
+ **
+ ****************************************************************************/
 
 package com.mazatech.gdx;
 
@@ -11,42 +46,29 @@ import com.badlogic.gdx.graphics.TextureData;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 
-// AmanithSVG
-import com.mazatech.svgt.SVGTRenderingQuality;
-import com.mazatech.svgt.SVGAssets;
+// AmanithSVG java binding (high level layer)
 import com.mazatech.svgt.SVGColor;
-import com.mazatech.svgt.SVGViewport;
 import com.mazatech.svgt.SVGDocument;
 import com.mazatech.svgt.SVGSurface;
+import com.mazatech.svgt.SVGViewport;
+// AmanithSVG java binding (low level layer)
+import com.mazatech.svgt.SVGTRenderingQuality;
 
 public class SVGTexture extends Texture {
 
     private static class SVGTextureDataFromDoc implements TextureData, Disposable {
 
-        private SVGTextureDataFromDoc(String xml) {
+        private SVGTextureDataFromDoc(SVGAssetsGDX svg,
+                                      String xml) {
 
-            this(xml, 0, 0, SVGColor.Clear, false);
+            this(svg, xml, 0, 0, SVGColor.Clear, false);
         }
 
-        private SVGTextureDataFromDoc(String xml,
-                                      int width,
-                                      int height) {
-
-            this(xml, width, height, SVGColor.Clear, false);
-        }
-
-        private SVGTextureDataFromDoc(String xml,
+        private SVGTextureDataFromDoc(final SVGAssetsGDX svg,
+                                      final String xml,
                                       int width,
                                       int height,
-                                      SVGColor clearColor) {
-
-            this(xml, width, height, clearColor, false);
-        }
-
-        private SVGTextureDataFromDoc(String xml,
-                                      int width,
-                                      int height,
-                                      SVGColor clearColor,
+                                      final SVGColor clearColor,
                                       boolean dilateEdgesFix) {
 
             if ((xml == null) || (xml.length() == 0)) {
@@ -56,6 +78,7 @@ public class SVGTexture extends Texture {
                 throw new IllegalArgumentException("clearColor is null");
             }
 
+            _svg = svg;
             _xml = xml;
             _width = width;
             _height = height;
@@ -64,10 +87,11 @@ public class SVGTexture extends Texture {
             _isPrepared = false;
         }
 
-        private SVGTextureDataFromDoc(SVGDocument doc,
+        private SVGTextureDataFromDoc(final SVGAssetsGDX svg,
+                                      final SVGDocument doc,
                                       int width,
                                       int height,
-                                      SVGColor clearColor,
+                                      final SVGColor clearColor,
                                       boolean dilateEdgesFix) {
 
             if (doc == null) {
@@ -77,6 +101,7 @@ public class SVGTexture extends Texture {
                 throw new IllegalArgumentException("clearColor is null");
             }
 
+            _svg = svg;
             _xml = null;
             _width = width;
             _height = height;
@@ -91,7 +116,7 @@ public class SVGTexture extends Texture {
 
             if (_doc == null) {
                 // create and parse the SVG document
-                _doc = SVGAssets.createDocument(_xml);
+                _doc = _svg.createDocument(_xml);
                 // unreference the XML string
                 _xml = null;
             }
@@ -157,10 +182,10 @@ public class SVGTexture extends Texture {
 
         private SVGSurface createSurface() {
 
-            int svgtMaxDimension = SVGSurface.getMaxDimension();
+            int svgMaxDimension = SVGSurface.getMaxDimension();
             int glMaxDimension = SVGTextureUtils.getGlMaxTextureDimension();
             // take care of OpenGL and AmanithSVG limitations
-            int maxDimension = Math.min(svgtMaxDimension, glMaxDimension);
+            int maxDimension = Math.min(svgMaxDimension, glMaxDimension);
             
             if ((_width > maxDimension) || (_height > maxDimension)) {
 
@@ -168,14 +193,14 @@ public class SVGTexture extends Texture {
                 float finalHeight = (float)_height;
                 float widthScale = (float)maxDimension / finalWidth;
                 float heightScale = (float)maxDimension / finalHeight;
-                float scale = (widthScale < heightScale) ? widthScale : heightScale;
+                float scale = Math.min(widthScale, heightScale);
                 // scale desired dimensions (we want at least a 1x1 texture)
                 _width = (int)Math.max(Math.floor(finalWidth * scale), 1);
                 _height = (int)Math.max(Math.floor(finalHeight * scale), 1);
             }
 
             // create the SVG drawing surface
-            return SVGAssets.createSurface(_width, _height);
+            return _svg.createSurface(_width, _height);
         }
 
         @Override
@@ -282,15 +307,16 @@ public class SVGTexture extends Texture {
             return true;
         }
 
-        private String _xml = null;
+        private final SVGAssetsGDX _svg;
+        private String _xml;
         // zero or negative dimensions means that they have to be derived from SVG document
-        private int _width = 0;
-        private int _height = 0;
-        private SVGColor _clearColor = SVGColor.Clear;
-        private boolean _dilateEdgesFix = false;
+        private int _width;
+        private int _height;
+        private final SVGColor _clearColor;
+        private final boolean _dilateEdgesFix;
         private SVGDocument _doc = null;
         private boolean _docExternal = false;
-        private boolean _isPrepared = false;
+        private boolean _isPrepared;
     }
 
     private static class SVGTextureDataFromSurface implements TextureData {
@@ -300,7 +326,7 @@ public class SVGTexture extends Texture {
             this(surface, false);
         }
 
-        private SVGTextureDataFromSurface(SVGSurface surface,
+        private SVGTextureDataFromSurface(final SVGSurface surface,
                                           boolean dilateEdgesFix) {
 
             if (surface == null) {
@@ -396,52 +422,37 @@ public class SVGTexture extends Texture {
             return false;
         }
 
-        private SVGSurface _surface = null;
-        private int _width = 0;
-        private int _height = 0;
-        private boolean _dilateEdgesFix = false;
-        private boolean _isPrepared = false;
+        private final SVGSurface _surface;
+        private final int _width;
+        private final int _height;
+        private final boolean _dilateEdgesFix;
+        private boolean _isPrepared;
     }
 
     /*
         Generate a texture from the given "internal" SVG filename.
 
         With the term "internal", it's intended those read-only files located on the internal storage.
-        For more details about libGDX file handling, please refer to the official documentation (http://github.com/libgdx/libgdx/wiki/File-handling)
+        For more details about libGDX file handling, please refer to the official documentation
+        (https://libgdx.com/wiki/file-handling)
 
         Size of the texture is derived from the information available within the SVG file:
 
-        - if the outermost <svg> element has 'width' and 'height' attributes, such values are used to size the texture
-        - if the outermost <svg> element does not have 'width' and 'height' attributes, the size of texture is determined by the width and height values of the 'viewBox' attribute
+        - if the outermost <svg> element has 'width' and 'height' attributes, such values are
+          used to size the texture
+        - if the outermost <svg> element does not have 'width' and 'height' attributes, the size
+          of texture is determined by the width and height values of the 'viewBox' attribute
     */
-    public SVGTexture(String internalPath) {
+    SVGTexture(SVGAssetsGDX svg,
+               String internalPath) {
 
-        this(Gdx.files.internal(internalPath));
+        this(svg, Gdx.files.internal(internalPath));
     }
 
-    /*
-        Generate a texture from the given "internal" SVG filename.
-        Size of texture is specified by the given 'width' and 'height'.
-        Before the SVG rendering, pixels are initialized with a transparent black.
-    */
-    public SVGTexture(String internalPath,
-                      int width,
-                      int height) {
+    SVGTexture(SVGAssetsGDX svg,
+               FileHandle file) {
 
-        this(Gdx.files.internal(internalPath), width, height);
-    }
-
-    /*
-        Generate a texture from the given "internal" SVG filename.
-        Size of texture is specified by the given 'width' and 'height'.
-        Before the SVG rendering, pixels are initialized with the given 'clearColor'.
-    */
-    public SVGTexture(String internalPath,
-                      int width,
-                      int height,
-                      SVGColor clearColor) {
-
-        this(Gdx.files.internal(internalPath), width, height, clearColor);
+        this(new SVGTextureDataFromDoc(svg, file.readString()));
     }
 
     /*
@@ -458,55 +469,28 @@ public class SVGTexture extends Texture {
         is applied, and the texture minification/magnification filtering is set to
         TextureFilter.Nearest.
     */
-    public SVGTexture(String internalPath,
-                      int width,
-                      int height,
-                      SVGColor clearColor,
-                      boolean dilateEdgesFix) {
+    SVGTexture(final SVGAssetsGDX svg,
+               final FileHandle file,
+               int width,
+               int height,
+               final SVGColor clearColor,
+               boolean dilateEdgesFix) {
 
-        this(Gdx.files.internal(internalPath), width, height, clearColor, dilateEdgesFix);
-    }
-
-    public SVGTexture(FileHandle file) {
-
-        this(new SVGTextureDataFromDoc(file.readString()));
-    }
-
-    public SVGTexture(FileHandle file,
-                      int width,
-                      int height) {
-
-        this(new SVGTextureDataFromDoc(file.readString(), width, height));
-    }
-
-    public SVGTexture(FileHandle file,
-                      int width,
-                      int height,
-                      SVGColor clearColor) {
-
-        this(new SVGTextureDataFromDoc(file.readString(), width, height, clearColor));
-    }
-
-    public SVGTexture(FileHandle file,
-                      int width,
-                      int height,
-                      SVGColor clearColor,
-                      boolean dilateEdgesFix) {
-
-        this(new SVGTextureDataFromDoc(file.readString(), width, height, clearColor, dilateEdgesFix));
+        this(new SVGTextureDataFromDoc(svg, file.readString(), width, height, clearColor, dilateEdgesFix));
     }
 
     // Create a texture out of an SVG document (already instantiated externally)
-    public SVGTexture(SVGDocument doc,
-                      int width,
-                      int height,
-                      SVGColor clearColor,
-                      boolean dilateEdgesFix) {
+    SVGTexture(final SVGAssetsGDX svg,
+               final SVGDocument doc,
+               int width,
+               int height,
+               final SVGColor clearColor,
+               boolean dilateEdgesFix) {
 
-        this(new SVGTextureDataFromDoc(doc, width, height, clearColor, dilateEdgesFix));
+        this(new SVGTextureDataFromDoc(svg, doc, width, height, clearColor, dilateEdgesFix));
     }
 
-    public SVGTexture(SVGTextureDataFromDoc data) {
+    private SVGTexture(SVGTextureDataFromDoc data) {
 
         super(data);
         _generatedFromDoc = true;
@@ -534,7 +518,7 @@ public class SVGTexture extends Texture {
         this(new SVGTextureDataFromSurface(surface, dilateEdgesFix));
     }
 
-    public SVGTexture(SVGTextureDataFromSurface data) {
+    private SVGTexture(SVGTextureDataFromSurface data) {
 
         super(data);
         _generatedFromDoc = false;
@@ -551,7 +535,8 @@ public class SVGTexture extends Texture {
     }
 
     @Override
-    public void setFilter(TextureFilter minFilter, TextureFilter magFilter) {
+    public void setFilter(TextureFilter minFilter,
+                          TextureFilter magFilter) {
 
         // we don't support mipmaps, so we have to patch minification filter
         if ((minFilter == TextureFilter.MipMap) ||
@@ -593,5 +578,5 @@ public class SVGTexture extends Texture {
         super.dispose();
     }
 
-    private boolean _generatedFromDoc = true;
+    private final boolean _generatedFromDoc;
 }

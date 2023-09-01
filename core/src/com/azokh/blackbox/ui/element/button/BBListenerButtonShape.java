@@ -5,7 +5,7 @@ public abstract class BBListenerButtonShape extends BBButtonShape
     private final BBListener ffListener;
 
 
-    public BBListenerButtonShape(int id, int x, int y, int width, int height, BBListener ffListener) {
+    public BBListenerButtonShape(int id, float x, float y, float width, float height, BBListener ffListener) {
         super(id, x, y, width, height);
         this.ffListener = ffListener;
 

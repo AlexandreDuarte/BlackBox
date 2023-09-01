@@ -12,9 +12,19 @@ import com.badlogic.gdx.graphics.g2d.PixmapPacker;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.mazatech.svgt.SVGAssets;
+import com.mazatech.gdx.SVGAssetsConfigGDX;
+import com.mazatech.gdx.SVGAssetsGDX;
 
 public class BlackBox extends Game {
+
+	private OrthographicCamera camera;
+	private ShapeRenderer shapeRenderer;
+	private SpriteBatch batch;
+
+	private MainMenuScreen mainMenuScreen;
+
+	private SVGAssetsGDX svg;
+	private float gameHeight;
 
 
 	@Override
@@ -37,22 +47,34 @@ public class BlackBox extends Game {
 		Resources.textFont.getData().scale(-0.55f);
 		generator.dispose();
 
-		Resources.camera = new OrthographicCamera();
-		Resources.camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		Resources.shapeRenderer = new ShapeRenderer();
-		Resources.batch = new SpriteBatch();
+		camera = new OrthographicCamera();
+		camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		shapeRenderer = new ShapeRenderer();
+		batch = new SpriteBatch();
 
 		Resources.game = this;
 
-		Resources.mainMenuScreen = new MainMenuScreen();
+		SVGAssetsConfigGDX svgCfg = new SVGAssetsConfigGDX(Gdx.graphics.getBackBufferWidth(),
+				Gdx.graphics.getBackBufferHeight(),
+				Gdx.graphics.getPpiX());
+		//SVGAssets.init();
 
-		SVGAssets.init();
+		svg = new SVGAssetsGDX(svgCfg);
+
+		gameHeight = Gdx.graphics.getHeight() - Resources.screenCutoutTop.getHeight();
 
 		if (Resources.gsClient == null)
 			Resources.gsClient = new NoGameServiceClient();
 
 
-		this.setScreen(Resources.mainMenuScreen);
+
+		mainMenuScreen = new MainMenuScreen();
+
+		Gdx.app.log("Starting", "message  " + Resources.screenCutoutTop.getX() + " " + Resources.screenCutoutTop.getY() + " " + Resources.screenCutoutTop.getWidth() + " " + Resources.screenCutoutTop.getHeight());
+
+
+
+		this.setScreen(mainMenuScreen);
 	}
 
 	@Override
@@ -62,11 +84,36 @@ public class BlackBox extends Game {
 	
 	@Override
 	public void dispose () {
-		Resources.shapeRenderer.dispose();
-		Resources.batch.dispose();
+		shapeRenderer.dispose();
+		batch.dispose();
 		Resources.menuFont.dispose();
 		Resources.titleFont.dispose();
 		Resources.textFont.dispose();
-		SVGAssets.dispose();
+		svg.dispose();
+		//SVGAssets.dispose();
+	}
+
+	public float getGameHeight() {
+		return gameHeight;
+	}
+
+	public OrthographicCamera getCamera() {
+		return camera;
+	}
+
+	public ShapeRenderer getShapeRenderer() {
+		return shapeRenderer;
+	}
+
+	public SVGAssetsGDX getSvg() {
+		return svg;
+	}
+
+	public SpriteBatch getBatch() {
+		return batch;
+	}
+
+	public MainMenuScreen getMainMenuScreen() {
+		return mainMenuScreen;
 	}
 }

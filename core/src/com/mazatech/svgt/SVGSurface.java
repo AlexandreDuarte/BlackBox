@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2018 Mazatech S.r.l.
+** Copyright (c) 2013-2023 Mazatech S.r.l.
 ** All rights reserved.
 ** 
 ** Redistribution and use in source and binary forms, with or without
@@ -48,7 +48,7 @@ package com.mazatech.svgt;
 public class SVGSurface {
 
     // Constructor.
-    public SVGSurface(int handle) {
+    SVGSurface(int handle) {
 
         SVGTError err;
         float[] viewport = new float[4];
@@ -69,8 +69,30 @@ public class SVGSurface {
     public void dispose() {
 
         // dispose unmanaged resources
-        AmanithSVG.svgtSurfaceDestroy(_surface);
+        if (AmanithSVG.svgtSurfaceDestroy(_surface) != SVGTError.None) {
+            // if we get an error here, it is highly likely that the code is being executed by
+            // a thread other than the one in which the surface was created (i.e. in a thread
+            // different than the rendering thread)
+        }
         _surface = null;
+    }
+
+    // return the power of two value greater (or equal) to a specified value
+    private int pow2Get(int value) {
+
+        int result;
+
+        if (value >= 0x40000000) {
+            result = 0x40000000;
+        }
+        else {
+            result = 1;
+            while (result < value) {
+                result <<= 1;
+            }
+        }
+
+        return result;
     }
 
     /*
@@ -79,7 +101,8 @@ public class SVGSurface {
         After resizing, the surface viewport will be reset to the whole surface, and the relative transformation will be reset to
         identity (pivot = [0; 0], angle = 0, post-translation = [0; 0]).
     */
-    public SVGTError resize(int newWidth, int newHeight) {
+    public SVGTError resize(int newWidth,
+                            int newHeight) {
 
         SVGTError err = AmanithSVG.svgtSurfaceResize(_surface, newWidth, newHeight);
 
@@ -107,16 +130,18 @@ public class SVGSurface {
         First the drawing surface is cleared if a valid (i.e. not null) clear color is provided.
         Then the specified document, if valid, is drawn.
     */
-    public SVGTError draw(SVGDocument document, SVGColor clearColor, SVGTRenderingQuality renderingQuality) {
+    public SVGTError draw(final SVGDocument document,
+                          final SVGColor clearColor,
+                          SVGTRenderingQuality renderingQuality) {
 
-        SVGTError err;
+        SVGTError err = SVGTError.None;
 
-        if (document == null) {
-            throw new IllegalArgumentException("document == null");
+        if (clearColor != null) {
+            // clear the surface
+            err = AmanithSVG.svgtSurfaceClear(_surface, clearColor.getRed(), clearColor.getGreen(), clearColor.getBlue(), clearColor.getAlpha());
         }
 
-        // set clear color
-        if ((err = setClearColor(clearColor)) == SVGTError.None) {
+        if ((err == SVGTError.None) && (document != null)) {
             // update document viewport (AmanithSVG backend)
             if ((err = document.updateViewport()) == SVGTError.None) {
                 // update surface viewport (AmanithSVG backend)
@@ -130,24 +155,28 @@ public class SVGSurface {
         return err;
     }
 
-    public SVGTError draw(java.nio.ByteBuffer rects, SVGColor clearColor, SVGTRenderingQuality renderingQuality) {
+    public SVGTError draw(final java.nio.ByteBuffer rects,
+                          final SVGColor clearColor,
+                          SVGTRenderingQuality renderingQuality) {
 
-        SVGTError err;
+        SVGTError err = SVGTError.None;
 
-        if (rects == null) {
-            throw new IllegalArgumentException("rects == null");
+        if (clearColor != null) {
+            // clear the surface
+            err = AmanithSVG.svgtSurfaceClear(_surface, clearColor.getRed(), clearColor.getGreen(), clearColor.getBlue(), clearColor.getAlpha());
         }
 
-        // set clear color
-        if ((err = setClearColor(clearColor)) == SVGTError.None) {
+        if ((err == SVGTError.None) && (rects != null)) {
             // draw rectangles/elements
-            err = AmanithSVG.svgtPackingRectsDraw(rects, _surface, renderingQuality);;
+            err = AmanithSVG.svgtPackingRectsDraw(rects, _surface, renderingQuality);
         }
 
         return err;
     }
 
-    public SVGTError copy(java.nio.IntBuffer dstPixels32, boolean redBlueSwap, boolean dilateEdgesFix) {
+    public SVGTError copy(java.nio.IntBuffer dstPixels32,
+                          boolean redBlueSwap,
+                          boolean dilateEdgesFix) {
 
         if (dstPixels32 == null) {
             throw new IllegalArgumentException("dstPixels32 == null");
@@ -156,7 +185,9 @@ public class SVGSurface {
         return AmanithSVG.svgtSurfaceCopy(_surface, dstPixels32, redBlueSwap, dilateEdgesFix);
     }
 
-    public SVGTError copy(int[] dstPixels32, boolean redBlueSwap, boolean dilateEdgesFix) {
+    public SVGTError copy(int[] dstPixels32,
+                          boolean redBlueSwap,
+                          boolean dilateEdgesFix) {
 
         if (dstPixels32 == null) {
             throw new IllegalArgumentException("dstPixels32 == null");
@@ -181,6 +212,16 @@ public class SVGSurface {
     public int getHeight() {
 
         return AmanithSVG.svgtSurfaceHeight(_surface);
+    }
+
+    public int getWidthPow2() {
+
+        return pow2Get(getWidth());
+    }
+
+    public int getHeightPow2() {
+
+        return pow2Get(getHeight());
     }
 
     public java.nio.ByteBuffer getPixels() {
@@ -215,25 +256,6 @@ public class SVGSurface {
         return AmanithSVG.svgtSurfaceMaxDimension();
     }
 
-    // Upload the clear color to the AmanithSVG backend
-    private SVGTError setClearColor(final SVGColor clearColor) {
-
-        SVGTError err;
-
-        if (clearColor != null) {
-            // clear the whole surface, with the specified color
-            if ((err = AmanithSVG.svgtClearColor(clearColor.getRed(), clearColor.getGreen(), clearColor.getBlue(), clearColor.getAlpha())) == SVGTError.None) {
-                err = AmanithSVG.svgtClearPerform(true);
-            }
-        }
-        else {
-            // do not clear the surface
-            err = AmanithSVG.svgtClearPerform(false);
-        }
-
-        return err;
-    }
-
     // If needed, update surface viewport at AmanithSVG backend side
     SVGTError updateViewport() {
 
@@ -254,7 +276,7 @@ public class SVGSurface {
     }
 
     // Surface native handle.
-    private SVGTHandle _surface = null;
+    private SVGTHandle _surface;
     // Viewport.
-    private SVGViewport _viewport = null;
+    private SVGViewport _viewport;
 }

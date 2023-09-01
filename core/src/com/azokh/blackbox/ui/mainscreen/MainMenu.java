@@ -1,21 +1,20 @@
 package com.azokh.blackbox.ui.mainscreen;
 
-import com.azokh.blackbox.gameselectionscreen.GameSelectionScreen;
 import com.azokh.blackbox.Resources;
 import com.azokh.blackbox.ScreenSelectionInterface;
+import com.azokh.blackbox.gameselectionscreen.GameSelectionScreen;
 import com.azokh.blackbox.statsscreen.StatsScreen;
+import com.azokh.blackbox.ui.element.Element;
 import com.azokh.blackbox.ui.element.button.BBButton;
 import com.azokh.blackbox.ui.element.button.BBListener;
 import com.azokh.blackbox.ui.element.button.BBListenerButton;
 import com.azokh.blackbox.ui.element.button.BBListenerButtonTexture;
-import com.azokh.blackbox.ui.element.Element;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Align;
 import com.mazatech.gdx.SVGTexture;
 import com.mazatech.svgt.SVGAlignment;
-import com.mazatech.svgt.SVGAssets;
 import com.mazatech.svgt.SVGColor;
 import com.mazatech.svgt.SVGDocument;
 import com.mazatech.svgt.SVGTAlign;
@@ -41,27 +40,27 @@ public class MainMenu implements Element, BBListener, InputProcessor {
     public MainMenu(ScreenSelectionInterface screenSelectionInterface, int offset) {
         this.screenSelectionInterface = screenSelectionInterface;
         buttons = new ArrayList<>();
-        BBButton startButton = new BBListenerButton(START_BUTTON, Gdx.graphics.getWidth() / 2 - offset - 60, Gdx.graphics.getHeight() / 2, "START", Resources.menuFont, this, Align.right);
-        BBButton statsButton = new BBListenerButton(STATS_BUTTON, Gdx.graphics.getWidth() / 2 - offset - 60, Gdx.graphics.getHeight() / 2 + (int)(5*startButton.height()/4), "STATS", Resources.textFont, this, Align.right);
+        BBButton startButton = new BBListenerButton(START_BUTTON, Gdx.graphics.getWidth() / 2.0f - offset - 60, Resources.game.getGameHeight() / 2.0f, "START", Resources.menuFont, this, Align.right);
+        BBButton statsButton = new BBListenerButton(STATS_BUTTON, Gdx.graphics.getWidth() / 2.0f - offset - 60, Resources.game.getGameHeight() / 2.0f + 3*startButton.height()/2, "STATS", Resources.textFont, this, Align.right);
         //BBButton exitButton = new BBListenerButton(ABOUT_BUTTON, Gdx.graphics.getWidth() / 2 - offset - 80, Gdx.graphics.getHeight() / 2 + (int)(5*startButton.height()/4) + (int)(5*statsButton.height()/4), "ABOUT", Resources.textFont, this, Align.right);
 
-        googlePlay = SVGAssets.createDocument(Gdx.files.internal("google-play.svg"));
+        googlePlay = Resources.game.getSvg().createDocumentFromFile("google-play.svg");
         googlePlay.setAspectRatio(new SVGAlignment(SVGTAlign.XMidYMid,
                 SVGTMeetOrSlice.Slice));
 
-        googlePlaySelected = SVGAssets.createDocument(Gdx.files.internal("google-play-selected.svg"));
+        googlePlaySelected = Resources.game.getSvg().createDocumentFromFile("google-play-selected.svg");
         googlePlaySelected.setAspectRatio(new SVGAlignment(SVGTAlign.XMidYMid,
                 SVGTMeetOrSlice.Slice));
 
-        googlePlayTexture = new SVGTexture(googlePlay,
+        googlePlayTexture = Resources.game.getSvg().createTexture(googlePlay,
                 (((Gdx.graphics.getWidth()/16)*16)/20), (((Gdx.graphics.getWidth()/16)*16)/20),
                 SVGColor.Clear, false);
 
-        googlePlayTextureSelected = new SVGTexture(googlePlaySelected,
+        googlePlayTextureSelected = Resources.game.getSvg().createTexture(googlePlaySelected,
                 (((Gdx.graphics.getWidth()/16)*16)/20), (((Gdx.graphics.getWidth()/16)*16)/20),
                 SVGColor.Clear, false);
 
-        BBButton googlePlayButton = new BBListenerButtonTexture(GOOGLE_PLAY_BUTTON, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight() - 100, googlePlayTexture, googlePlayTextureSelected, this);
+        BBButton googlePlayButton = new BBListenerButtonTexture(GOOGLE_PLAY_BUTTON, Gdx.graphics.getWidth()/2.0f, Resources.game.getGameHeight() - 100, googlePlayTexture, googlePlayTextureSelected, this);
 
         buttons.add(startButton);
         buttons.add(statsButton);
@@ -92,29 +91,29 @@ public class MainMenu implements Element, BBListener, InputProcessor {
 
     @Override
     public void render() {
-        Resources.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        Resources.game.getShapeRenderer().begin(ShapeRenderer.ShapeType.Filled);
         for(int i = 0; i < buttons.size(); i++)
         {
             BBButton b = buttons.get(i);
             if(!b.isHidden())
             {
-                //b.drawBounds(Resources.shapeRenderer);
+                //b.drawBounds(Resources.game.getShapeRenderer());
             }
         }
-        Resources.shapeRenderer.end();
+        Resources.game.getShapeRenderer().end();
 
 
 
-        Resources.batch.begin();
+        Resources.game.getBatch().begin();
         for(int i = 0; i < buttons.size(); i++)
         {
             BBButton b = buttons.get(i);
             if(!b.isHidden())
             {
-                b.draw(Resources.batch);
+                b.draw(Resources.game.getBatch());
             }
         }
-        Resources.batch.end();
+        Resources.game.getBatch().end();
     }
 
     @Override
@@ -125,7 +124,9 @@ public class MainMenu implements Element, BBListener, InputProcessor {
     @Override
     public void dispose() {
         googlePlay.dispose();
+        googlePlaySelected.dispose();
         googlePlayTexture.dispose();
+        googlePlayTextureSelected.dispose();
     }
 
     @Override

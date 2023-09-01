@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2018 Mazatech S.r.l.
+** Copyright (c) 2013-2023 Mazatech S.r.l.
 ** All rights reserved.
 ** 
 ** Redistribution and use in source and binary forms, with or without
@@ -36,11 +36,19 @@
 
 package com.mazatech.svgt;
 
+// Java
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
 public class SVGPacker {
 
-    public class SVGPackedBin {
+    public static class SVGPackedBin {
 
-        private SVGPackedBin(int index, int width, int height, int rectsCount, java.nio.ByteBuffer nativeRects) {
+        private SVGPackedBin(int index,
+                             int width,
+                             int height,
+                             int rectsCount,
+                             final ByteBuffer nativeRects) {
 
             _index = index;
             _width = width;
@@ -69,20 +77,25 @@ public class SVGPacker {
             return _rectsCount;
         }
 
-        public java.nio.ByteBuffer getNativeRects() {
+        public ByteBuffer getNativeRects() {
 
-            return _nativeRects.asReadOnlyBuffer();
+            ByteBuffer rects = _nativeRects.asReadOnlyBuffer();
+            rects.order(ByteOrder.nativeOrder());
+            return rects;
         }
 
-        private int _index;
-        private int _width;
-        private int _height;
-        private int _rectsCount;
-        private java.nio.ByteBuffer _nativeRects;
+        private final int _index;
+        private final int _width;
+        private final int _height;
+        private final int _rectsCount;
+        private final ByteBuffer _nativeRects;
     }
 
     // Constructor.
-    public SVGPacker(float scale, int maxTexturesDimension, int border, boolean pow2Textures) {
+    SVGPacker(float scale,
+              int maxTexturesDimension,
+              int border,
+              boolean pow2Textures) {
 
         if (scale <= 0) {
             throw new IllegalArgumentException("scale <= 0");
@@ -111,17 +124,13 @@ public class SVGPacker {
     */
     public SVGTError begin() {
 
-        if (_packing) {
-            return SVGTError.StillPacking;
+        SVGTError err = _packing ? SVGTError.StillPacking : AmanithSVG.svgtPackingBegin(_maxTexturesDimension, _border, _pow2Textures, _scale);
+
+        if (err == SVGTError.None) {
+            _packing = true;
         }
-        else {
-            SVGTError err = AmanithSVG.svgtPackingBegin(_maxTexturesDimension, _border, _pow2Textures, _scale);
-            // check for errors
-            if (err == SVGTError.None) {
-                _packing = true;
-            }
-            return err;
-        }
+
+        return err;
     }
 
     /*!
@@ -134,7 +143,10 @@ public class SVGPacker {
         - info[0] = number of collected bounding boxes
         - info[1] = the actual number of packed bounding boxes (boxes whose dimensions exceed the 'maxTexturesDimension' value specified through the constructor, will be discarded)
     */
-    public SVGTError add(SVGDocument document, boolean explodeGroup, float scale, int[] info) {
+    public SVGTError add(SVGDocument document,
+                         boolean explodeGroup,
+                         float scale,
+                         int[] info) {
 
         if (document == null) {
             throw new IllegalArgumentException("document == null");
@@ -145,17 +157,13 @@ public class SVGPacker {
         if (info.length < 2) {
             throw new IllegalArgumentException("info parameter must be an array of at least 2 entries");
         }
-        else {
-            if (!_packing) {
-                return SVGTError.NotPacking;
-            }
-            else {
-                // add an SVG document to the current packing task, and get back information about collected bounding boxes
-                return AmanithSVG.svgtPackingAdd(document.getHandle(), explodeGroup, scale, info);
-                // info[0] = number of collected bounding boxes
-                // info[1] = the actual number of packed bounding boxes (boxes whose dimensions exceed the 'maxDimension' value specified to the svgtPackingBegin function, will be discarded)
-            }
-        }
+
+        // add an SVG document to the current packing task, and get back information about collected bounding boxes
+        //
+        // info[0] = number of collected bounding boxes
+        // info[1] = the actual number of packed bounding boxes (boxes whose dimensions exceed the 'maxDimension'
+        //           value specified to the svgtPackingBegin function, will be discarded)
+        return (!_packing) ? SVGTError.NotPacking : AmanithSVG.svgtPackingAdd(document.getHandle(), explodeGroup, scale, info);
     }
 
     /*!
@@ -166,46 +174,40 @@ public class SVGPacker {
     */
     public SVGPackedBin[] end(boolean performPacking) {
 
-        SVGTError err;
-
-        if (!_packing) {
-            return null;
-        }
-
-        // close the current packing task
-        if ((err = AmanithSVG.svgtPackingEnd(performPacking)) != SVGTError.None) {
-            return null;
-        }
-        // if requested, close the packing process without doing anything
-        if (!performPacking) {
-            return null;
-        }
-        else {
-            // get number of generated bins
-            int binsCount = AmanithSVG.svgtPackingBinsCount();
-            if (binsCount <= 0) {
-                return null;
-            }
-            else {
-                // allocate space for bins
-                SVGPackedBin[] bins = new SVGPackedBin[binsCount];
-                // allocate space to store information of a single bin
-                int[] binInfo = new int[3];
-
-                for (int i = 0; i < binsCount; ++i) {
-                    // get information relative to the surface/page
-                    AmanithSVG.svgtPackingBinInfo(i, binInfo);
-                    bins[i] = new SVGPackedBin(i, binInfo[0], binInfo[1], binInfo[2], AmanithSVG.svgtPackingBinRects(i));
+        SVGPackedBin[] result = null;
+        
+        if (_packing) {
+            // close the current packing task
+            SVGTError err = AmanithSVG.svgtPackingEnd(performPacking);
+            if (err == SVGTError.None) {
+                // if requested, close the packing process without doing anything
+                if (performPacking) {
+                    // get number of generated bins
+                    int binsCount = AmanithSVG.svgtPackingBinsCount();
+                    if (binsCount > 0) {
+                        // allocate space for bins
+                        SVGPackedBin[] bins = new SVGPackedBin[binsCount];
+                        // allocate space to store information of a single bin
+                        int[] binInfo = new int[3];
+                        // loop over bins
+                        for (int i = 0; i < binsCount; ++i) {
+                            // get information relative to the surface/page
+                            AmanithSVG.svgtPackingBinInfo(i, binInfo);
+                            bins[i] = new SVGPackedBin(i, binInfo[0], binInfo[1], binInfo[2], AmanithSVG.svgtPackingBinRects(i));
+                        }
+                        // we have finished
+                        result = bins;
+                    }
                 }
-
-                return bins;
             }
         }
+
+        return result;
     }
 
-    private float _scale;
-    private int _maxTexturesDimension;
-    private int _border;
-    private boolean _pow2Textures;
+    private final float _scale;
+    private final int _maxTexturesDimension;
+    private final int _border;
+    private final boolean _pow2Textures;
     private boolean _packing;
 }

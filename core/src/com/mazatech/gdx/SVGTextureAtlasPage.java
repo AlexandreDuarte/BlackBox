@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2018 Mazatech S.r.l.
+** Copyright (c) 2013-2023 Mazatech S.r.l.
 ** All rights reserved.
 ** 
 ** Redistribution and use in source and binary forms, with or without
@@ -36,8 +36,9 @@
 package com.mazatech.gdx;
 
 // Java
-import java.nio.ByteOrder;
 import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 // libGDX
 import com.badlogic.gdx.graphics.Pixmap;
@@ -47,21 +48,24 @@ import com.badlogic.gdx.graphics.TextureData;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 
-// AmanithSVG
+// AmanithSVG java binding (high level layer)
+import com.mazatech.svgt.SVGColor;
+import com.mazatech.svgt.SVGPacker;
+import com.mazatech.svgt.SVGSurface;
+// AmanithSVG java binding (low level layer)
+import com.mazatech.svgt.AmanithSVG;
 import com.mazatech.svgt.SVGTError;
 import com.mazatech.svgt.SVGTHandle;
 import com.mazatech.svgt.SVGTRenderingQuality;
-import com.mazatech.svgt.SVGAssets;
-import com.mazatech.svgt.AmanithSVG;
-import com.mazatech.svgt.SVGColor;
-import com.mazatech.svgt.SVGSurface;
-import com.mazatech.svgt.SVGPacker;
 
 public class SVGTextureAtlasPage extends Texture {
 
     private static class SVGTextureAtlasPageData implements TextureData, Disposable {
 
-        private SVGTextureAtlasPageData(SVGPacker.SVGPackedBin packerPage, boolean dilateEdgesFix, SVGColor clearColor) {
+        private SVGTextureAtlasPageData(final SVGAssetsGDX svg,
+                                        final SVGPacker.SVGPackedBin packerPage,
+                                        boolean dilateEdgesFix,
+                                        final SVGColor clearColor) {
 
             if (packerPage == null) {
                 throw new IllegalArgumentException("packerPage == null");
@@ -70,13 +74,22 @@ public class SVGTextureAtlasPage extends Texture {
                 throw new IllegalArgumentException("clearColor == null");
             }
 
-            java.nio.ByteBuffer nativeRects = packerPage.getNativeRects();
+            // get native rectangles from packer
+            ByteBuffer nativeRects = packerPage.getNativeRects();
+
+            _svg = svg;
             _width = packerPage.getWidth();
             _height = packerPage.getHeight();
-            // copy the native rectangles
             _nativeRectsCount = packerPage.getRectsCount();
-            _nativeRectsCopy = java.nio.ByteBuffer.allocateDirect(nativeRects.capacity());
+            // copy the native rectangles
+            _nativeRectsCopy = ByteBuffer.allocateDirect(nativeRects.capacity());
+            _nativeRectsCopy.order(ByteOrder.nativeOrder());
             _nativeRectsCopy.put(nativeRects);
+            // rewind buffer; NB: the cast is necessary, because Java 9 introduces overridden
+            // methods with covariant return types for the some methods in java.nio.ByteBuffer
+            // that are used by the driver. By casting to base Buffer we are always safe. See also
+            // http://github.com/libgdx/libgdx/pull/6331 and http://stackoverflow.com/a/58435689/7912520
+            ((Buffer)_nativeRectsCopy).rewind();
             _clearColor = clearColor;
             _dilateEdgesFix = dilateEdgesFix;
             _isPrepared = false;
@@ -87,9 +100,11 @@ public class SVGTextureAtlasPage extends Texture {
             return _nativeRectsCount;
         }
 
-        public java.nio.ByteBuffer getRects() {
+        public ByteBuffer getRects() {
 
-            return _nativeRectsCopy.asReadOnlyBuffer();
+            ByteBuffer result = _nativeRectsCopy.asReadOnlyBuffer();
+            result.order(ByteOrder.nativeOrder());
+            return result;
         }
 
         @Override
@@ -132,7 +147,7 @@ public class SVGTextureAtlasPage extends Texture {
             }
             else {
                 // create the SVG drawing surface
-                SVGSurface surface = SVGAssets.createSurface(_width, _height);
+                SVGSurface surface = _svg.createSurface(_width, _height);
 
                 if (surface != null) {
                     // draw packed rectangles/elements
@@ -194,18 +209,22 @@ public class SVGTextureAtlasPage extends Texture {
             return true;
         }
 
-        private int _width = 0;
-        private int _height = 0;
-        private SVGColor _clearColor = SVGColor.Clear;
-        private int _nativeRectsCount = 0;
-        private java.nio.ByteBuffer _nativeRectsCopy = null;
-        private boolean _dilateEdgesFix = false;
-        private boolean _isPrepared = false;
+        private final SVGAssetsGDX _svg;
+        private final int _width;
+        private final int _height;
+        private final SVGColor _clearColor;
+        private final int _nativeRectsCount;
+        private ByteBuffer _nativeRectsCopy;
+        private final boolean _dilateEdgesFix;
+        private boolean _isPrepared;
     }
 
-    SVGTextureAtlasPage(SVGPacker.SVGPackedBin packerPage, boolean dilateEdgesFix, SVGColor clearColor) {
+    SVGTextureAtlasPage(final SVGAssetsGDX svg,
+                        final SVGPacker.SVGPackedBin packerPage,
+                        boolean dilateEdgesFix,
+                        final SVGColor clearColor) {
 
-        this(new SVGTextureAtlasPageData(packerPage, dilateEdgesFix, clearColor));
+        this(new SVGTextureAtlasPageData(svg, packerPage, dilateEdgesFix, clearColor));
     }
 
     private SVGTextureAtlasPage(SVGTextureAtlasPageData data) {
@@ -226,17 +245,13 @@ public class SVGTextureAtlasPage extends Texture {
         setWrap(TextureWrap.ClampToEdge, TextureWrap.ClampToEdge);
     }
 
-    private void buildRegions(int regionsCount, java.nio.ByteBuffer nativeRects) {
+    private void buildRegions(int regionsCount,
+                              final ByteBuffer nativeRects) {
 
         int nativeRectSize = AmanithSVG.svgtPackedRectSize();
-        String arch = System.getProperty("os.arch").toLowerCase();
-        boolean is64Bit = arch.equals("amd64") || arch.equals("x86_64") || arch.equals("aarch64");
+        String arch = System.getProperty("os.arch", "").toLowerCase();
+        boolean is64Bit = arch.contains("64") || arch.startsWith("armv8");
         int padBytes = is64Bit ? (nativeRectSize - 52) : (nativeRectSize - 48);
-        Buffer buffer = nativeRects;
-
-        // rewind the buffer, in order to perform consecutive reads
-        nativeRects.order(ByteOrder.nativeOrder());
-        buffer.rewind();
 
         _regions = new SVGTextureAtlasRegion[regionsCount];
 
@@ -259,7 +274,7 @@ public class SVGTextureAtlasPage extends Texture {
                 byte pad = nativeRects.get();
             }
 
-            _regions[i] = new SVGTextureAtlasRegion(this, elemName, originalX, originalY, x, y, width, height, new SVGTHandle(docHandle), zOrder);
+            _regions[i] = new SVGTextureAtlasRegion(this, elemName, originalX, originalY, x, y, width, height, new SVGTHandle(docHandle), zOrder, dstViewportWidth, dstViewportHeight);
         }
     }
 
@@ -270,7 +285,8 @@ public class SVGTextureAtlasPage extends Texture {
     }
 
     @Override
-    public void setFilter(TextureFilter minFilter, TextureFilter magFilter) {
+    public void setFilter(TextureFilter minFilter,
+                          TextureFilter magFilter) {
 
         // we don't support mipmaps, so we have to patch minification filter
         if ((minFilter == TextureFilter.MipMap) ||

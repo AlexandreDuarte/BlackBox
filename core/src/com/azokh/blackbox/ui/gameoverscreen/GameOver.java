@@ -31,7 +31,7 @@ public class GameOver implements Element, BBListener, InputProcessor {
         this.gameRealBoard = gameRealBoard;
         Resources.gsClient.updateLeaderboard(gameType.getLeaderboard(), new GameStatEntry((long)(gameScore*1000)));
         buttons = new ArrayList<>();
-        BBButton backButton = new BBListenerButton(BACK_BUTTON, Gdx.graphics.getWidth()/2, 4*Gdx.graphics.getHeight()/5, "BACK", Resources.textFont, this, Align.center);
+        BBButton backButton = new BBListenerButton(BACK_BUTTON, Gdx.graphics.getWidth()/2, 4*Resources.game.getGameHeight()/5, "BACK", Resources.textFont, this, Align.center);
         buttons.add(backButton);
     }
 
@@ -42,30 +42,30 @@ public class GameOver implements Element, BBListener, InputProcessor {
 
     @Override
     public void render() {
-        Resources.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        Resources.game.getShapeRenderer().begin(ShapeRenderer.ShapeType.Filled);
         for(int i = 0; i < buttons.size(); i++)
         {
             BBButton b = buttons.get(i);
             if(!b.isHidden())
             {
-                //b.drawBounds(Resources.shapeRenderer);
+                //b.drawBounds(Resources.game.getShapeRenderer());
             }
         }
-        Resources.shapeRenderer.end();
+        Resources.game.getShapeRenderer().end();
 
 
         this.gameRealBoard.render();
 
-        Resources.batch.begin();
+        Resources.game.getBatch().begin();
         for(int i = 0; i < buttons.size(); i++)
         {
             BBButton b = buttons.get(i);
             if(!b.isHidden())
             {
-                b.draw(Resources.batch);
+                b.draw(Resources.game.getBatch());
             }
         }
-        Resources.batch.end();
+        Resources.game.getBatch().end();
     }
 
     @Override

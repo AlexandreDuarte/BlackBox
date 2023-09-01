@@ -1,6 +1,6 @@
 package com.azokh.blackbox.ui.element.button;
 
-import com.badlogic.gdx.Gdx;
+import com.azokh.blackbox.Resources;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
@@ -15,11 +15,11 @@ public abstract class BBButtonTexture extends BBButton {
 
     private final Texture[] texture;
 
-    public BBButtonTexture(int id, int x, int y, Texture texture) {
+    public BBButtonTexture(int id, float x, float y, Texture texture) {
         this(id, x, y, texture, texture);
     }
 
-    public BBButtonTexture(int id, int x, int y, Texture texture1, Texture texture2) {
+    public BBButtonTexture(int id, float x, float y, Texture texture1, Texture texture2) {
         super(id);
         this.hidden = false;
         this.active = false;
@@ -31,8 +31,8 @@ public abstract class BBButtonTexture extends BBButton {
         this.texture = new Texture[]{texture1, texture2};
 
         this.bounds = new Rectangle[]{
-                new Rectangle(x+ offsetx[0], Gdx.graphics.getHeight() - (y + offsety[0]), texture[0].getWidth(), texture[0].getHeight()),
-                new Rectangle(x+ offsetx[1], Gdx.graphics.getHeight() - (y + offsety[1]), texture[1].getWidth(), texture[1].getHeight())
+                new Rectangle(x+ offsetx[0], Resources.game.getGameHeight() - (y + offsety[0]), texture[0].getWidth(), texture[0].getHeight()),
+                new Rectangle(x+ offsetx[1], Resources.game.getGameHeight() - (y + offsety[1]), texture[1].getWidth(), texture[1].getHeight())
         };
     }
 

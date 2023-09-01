@@ -1,6 +1,8 @@
 /****************************************************************************
-** Copyright (c) 2013-2018 Mazatech S.r.l.
+** Copyright (c) 2013-2023 Mazatech S.r.l.
 ** All rights reserved.
+** 
+** This file is part of AmanithSVG software, an SVG rendering library.
 ** 
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted (subject to the limitations in the disclaimer
@@ -57,5 +59,5 @@ public class SVGTHandle {
         return _nativeHandle;
     }
 
-    private int _nativeHandle;
+    private final int _nativeHandle;
 }

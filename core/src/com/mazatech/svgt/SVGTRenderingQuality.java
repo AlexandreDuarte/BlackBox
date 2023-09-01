@@ -1,6 +1,8 @@
 /****************************************************************************
-** Copyright (c) 2013-2018 Mazatech S.r.l.
+** Copyright (c) 2013-2023 Mazatech S.r.l.
 ** All rights reserved.
+** 
+** This file is part of AmanithSVG software, an SVG rendering library.
 ** 
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted (subject to the limitations in the disclaimer
@@ -39,11 +41,11 @@ package com.mazatech.svgt;
 public enum SVGTRenderingQuality {
 
     /* Disables antialiasing */
-    NonAntialiased(AmanithSVG.SVGT_RENDERING_QUALITY_NONANTIALIASED),
+    NonAntialiased(AmanithSVGJNI.SVGT_RENDERING_QUALITY_NONANTIALIASED),
     /* Causes rendering to be done at the highest available speed */
-    Faster(AmanithSVG.SVGT_RENDERING_QUALITY_FASTER),
+    Faster(AmanithSVGJNI.SVGT_RENDERING_QUALITY_FASTER),
     /* Causes rendering to be done with the highest available quality */
-    Better(AmanithSVG.SVGT_RENDERING_QUALITY_BETTER);
+    Better(AmanithSVGJNI.SVGT_RENDERING_QUALITY_BETTER);
 
     SVGTRenderingQuality(int svgtEnum) {
         
@@ -61,5 +63,5 @@ public enum SVGTRenderingQuality {
     }
 
     private final int _svgtEnum;
-    private static SVGTRenderingQuality[] _allValues = values();
+    private static final SVGTRenderingQuality[] _allValues = values();
 }

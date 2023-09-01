@@ -8,13 +8,13 @@ public class BeamElement implements Element {
 
     private int width = 0;
     int targetWidth;
-    int xpos, ypos;
+    float xpos, ypos;
     float delay;
     Color color, shadowColor;
     boolean vertical, direction;
 
 
-    public BeamElement(int targetWidth, float delay, int ypos, Color color, boolean vertical, boolean direction) {
+    public BeamElement(int targetWidth, float delay, float ypos, Color color, boolean vertical, boolean direction) {
         this.targetWidth = targetWidth;
         this.delay = delay;
         this.ypos = ypos;
@@ -46,15 +46,15 @@ public class BeamElement implements Element {
 
     public void render() {
         if (vertical) {
-            Resources.shapeRenderer.setColor(shadowColor);
-            Resources.shapeRenderer.rect(ypos+5, xpos-10, 50, width+10);
-            Resources.shapeRenderer.setColor(color);
-            Resources.shapeRenderer.rect(ypos, xpos, 50, width);
+            Resources.game.getShapeRenderer().setColor(shadowColor);
+            Resources.game.getShapeRenderer().rect(ypos+5, xpos-10, 50, width+10);
+            Resources.game.getShapeRenderer().setColor(color);
+            Resources.game.getShapeRenderer().rect(ypos, xpos, 50, width);
         } else {
-            Resources.shapeRenderer.setColor(shadowColor);
-            Resources.shapeRenderer.rect(xpos-10, ypos-5, width+10, 50);
-            Resources.shapeRenderer.setColor(color);
-            Resources.shapeRenderer.rect(xpos, ypos, width, 50);
+            Resources.game.getShapeRenderer().setColor(shadowColor);
+            Resources.game.getShapeRenderer().rect(xpos-10, ypos-5, width+10, 50);
+            Resources.game.getShapeRenderer().setColor(color);
+            Resources.game.getShapeRenderer().rect(xpos, ypos, width, 50);
         }
 
 

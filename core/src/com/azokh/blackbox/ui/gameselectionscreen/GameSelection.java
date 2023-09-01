@@ -30,10 +30,10 @@ public class GameSelection implements Element, BBListener, InputProcessor {
     public GameSelection(ScreenSelectionInterface gameSelectionInterface) {
         buttons = new ArrayList<>();
         BBButton backButton = new BBListenerButton(BACK_BUTTON, 40, 40, "BACK", Resources.textFont, this);
-        //BBButton validateButton = new BBListenerButton(VALIDATE_BUTTON, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()*4/5, "VALIDATE", Resources.textFont, this, Align.center);
-        BBButton fourButton = new BBListenerButton(FOUR_BUTTON, Gdx.graphics.getWidth() / 2, 2*Gdx.graphics.getHeight() / 5, "4x4", Resources.menuFont, this, Align.center);
-        BBButton sixButton = new BBListenerButton(FIVE_BUTTON, Gdx.graphics.getWidth() / 2, 2*Gdx.graphics.getHeight() / 5 + (int)(3*fourButton.height()/2), "5x5", Resources.menuFont, this, Align.center);
-        BBButton eightButton = new BBListenerButton(SIX_BUTTON, Gdx.graphics.getWidth() / 2, 2*Gdx.graphics.getHeight() / 5 + (int)(3*fourButton.height()/2) + (int)(3*sixButton.height()/2), "6x6", Resources.menuFont, this, Align.center);
+        //BBButton validateButton = new BBListenerButton(VALIDATE_BUTTON, Gdx.graphics.getWidth()/2, Resources.game.getGameHeight()*4/5, "VALIDATE", Resources.textFont, this, Align.center);
+        BBButton fourButton = new BBListenerButton(FOUR_BUTTON, Gdx.graphics.getWidth() / 2, 2*Resources.game.getGameHeight() / 5, "4x4", Resources.menuFont, this, Align.center);
+        BBButton sixButton = new BBListenerButton(FIVE_BUTTON, Gdx.graphics.getWidth() / 2, 2*Resources.game.getGameHeight() / 5 + (int)(3*fourButton.height()/2), "5x5", Resources.menuFont, this, Align.center);
+        BBButton eightButton = new BBListenerButton(SIX_BUTTON, Gdx.graphics.getWidth() / 2, 2*Resources.game.getGameHeight() / 5 + (int)(3*fourButton.height()/2) + (int)(3*sixButton.height()/2), "6x6", Resources.menuFont, this, Align.center);
 
         buttons.add(fourButton);
         buttons.add(sixButton);
@@ -58,7 +58,7 @@ public class GameSelection implements Element, BBListener, InputProcessor {
                 gameSelectionInterface.setNextScreen(new GameScreen(GameTypes.sixsix));
                 break;
             case BACK_BUTTON:
-                gameSelectionInterface.setNextScreen(Resources.mainMenuScreen);
+                gameSelectionInterface.setNextScreen(Resources.game.getMainMenuScreen());
                 break;
         }
 
@@ -66,29 +66,29 @@ public class GameSelection implements Element, BBListener, InputProcessor {
 
     @Override
     public void render() {
-        Resources.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        Resources.game.getShapeRenderer().begin(ShapeRenderer.ShapeType.Filled);
         for(int i = 0; i < buttons.size(); i++)
         {
             BBButton b = buttons.get(i);
             if(!b.isHidden())
             {
-                //b.drawBounds(Resources.shapeRenderer);
+                //b.drawBounds(Resources.game.getShapeRenderer());
             }
         }
-        Resources.shapeRenderer.end();
+        Resources.game.getShapeRenderer().end();
 
 
 
-        Resources.batch.begin();
+        Resources.game.getBatch().begin();
         for(int i = 0; i < buttons.size(); i++)
         {
             BBButton b = buttons.get(i);
             if(!b.isHidden())
             {
-                b.draw(Resources.batch);
+                b.draw(Resources.game.getBatch());
             }
         }
-        Resources.batch.end();
+        Resources.game.getBatch().end();
     }
 
     @Override

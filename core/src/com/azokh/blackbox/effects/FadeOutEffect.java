@@ -24,10 +24,10 @@ public class FadeOutEffect extends Effect implements Element {
 
             Gdx.gl.glEnable(GL20.GL_BLEND);
             Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-            Resources.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-            Resources.shapeRenderer.setColor(fadeColor);
-            Resources.shapeRenderer.rect(0.0f, 0.0f, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-            Resources.shapeRenderer.end();
+            Resources.game.getShapeRenderer().begin(ShapeRenderer.ShapeType.Filled);
+            Resources.game.getShapeRenderer().setColor(fadeColor);
+            Resources.game.getShapeRenderer().rect(0.0f, 0.0f, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+            Resources.game.getShapeRenderer().end();
             Gdx.gl.glDisable(GL20.GL_BLEND);
         }
     }

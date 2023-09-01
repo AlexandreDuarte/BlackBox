@@ -23,7 +23,7 @@ allprojects {
     ext {
         appName = "BlackBox"
         gdxVersion = '1.12.0'
-        amanithsvgVersion = '1.9.9'
+        amanithsvgVersion = '2.0.1'
         roboVMVersion = '2.3.16'
         box2DLightsVersion = '1.5'
         ashleyVersion = '1.7.4'
@@ -60,7 +60,6 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86"
         natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86_64"
 
-        natives "com.mazatech.amanithsvg:amanithsvg-gdx:$amanithsvgVersion:natives-armeabi"
         natives "com.mazatech.amanithsvg:amanithsvg-gdx:$amanithsvgVersion:natives-armeabi-v7a"
         natives "com.mazatech.amanithsvg:amanithsvg-gdx:$amanithsvgVersion:natives-arm64-v8a"
         natives "com.mazatech.amanithsvg:amanithsvg-gdx:$amanithsvgVersion:natives-x86"

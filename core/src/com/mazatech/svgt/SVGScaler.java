@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2018 Mazatech S.r.l.
+** Copyright (c) 2013-2023 Mazatech S.r.l.
 ** All rights reserved.
 ** 
 ** Redistribution and use in source and binary forms, with or without
@@ -39,7 +39,11 @@ package com.mazatech.svgt;
 public class SVGScaler {
 
     // Constructor.
-    public SVGScaler(float referenceWidth, float referenceHeight, SVGScalerMatchMode matchMode, float match, float offsetScale) {
+    public SVGScaler(float referenceWidth,
+                     float referenceHeight,
+                     SVGScalerMatchMode matchMode,
+                     float match,
+                     float offsetScale) {
 
         _referenceWidth = referenceWidth;
         _referenceHeight = referenceHeight;
@@ -48,19 +52,21 @@ public class SVGScaler {
         _offsetScale = offsetScale;
     }
 
-    public void setReferenceResolution(float referenceWidth, float referenceHeight) {
+    public void setReferenceResolution(float referenceWidth,
+                                       float referenceHeight) {
 
         _referenceWidth = referenceWidth;
         _referenceHeight = referenceHeight;   
     }
 
-    public float scaleFactorCalc(float currentWidth, float currentHeight) {
+    public float scaleFactorCalc(float currentWidth,
+                                 float currentHeight) {
 
         float scale;
         boolean referenceLandscape, currentLandscape;
 
-        switch (_matchMode)
-        {
+        switch (_matchMode) {
+
             case Horizontal:
                 scale = currentWidth / _referenceWidth;
                 break;
@@ -70,8 +76,8 @@ public class SVGScaler {
                 break;
 
             case MinDimension:
-                referenceLandscape = (_referenceWidth > _referenceHeight) ? true : false;
-                currentLandscape = (currentWidth > currentHeight) ? true : false;
+                referenceLandscape = _referenceWidth > _referenceHeight;
+                currentLandscape = currentWidth > currentHeight;
                 if (referenceLandscape != currentLandscape) {
                     scale = (currentWidth <= currentHeight) ? (currentWidth / _referenceHeight) : (currentHeight / _referenceWidth);
                 }
@@ -81,8 +87,8 @@ public class SVGScaler {
                 break;
 
             case MaxDimension:
-                referenceLandscape = (_referenceWidth > _referenceHeight) ? true : false;
-                currentLandscape = (currentWidth > currentHeight) ? true : false;
+                referenceLandscape = _referenceWidth > _referenceHeight;
+                currentLandscape = currentWidth > currentHeight;
                 if (referenceLandscape != currentLandscape) {
                     scale = (currentWidth >= currentHeight) ? (currentWidth / _referenceHeight) : (currentHeight / _referenceWidth);
                 }
@@ -126,7 +132,7 @@ public class SVGScaler {
 
     private float _referenceWidth;
     private float _referenceHeight;
-    private SVGScalerMatchMode _matchMode;
-    private float _match;
-    private float _offsetScale;
+    private final SVGScalerMatchMode _matchMode;
+    private final float _match;
+    private final float _offsetScale;
 }

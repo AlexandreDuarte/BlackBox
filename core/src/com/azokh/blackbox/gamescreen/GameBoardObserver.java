@@ -29,14 +29,14 @@ public class GameBoardObserver implements Element {
 
     @Override
     public void render() {
-        Resources.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        Resources.shapeRenderer.setColor(Resources.titleColor);
+        Resources.game.getShapeRenderer().begin(ShapeRenderer.ShapeType.Filled);
+        Resources.game.getShapeRenderer().setColor(Resources.titleColor);
         for (int x = 1; x < boardSize-1; x++) {
             for (int y = 1; y < boardSize-1; y++) {
                 this.board_elements[y][x].render();
             }
         }
-        Resources.shapeRenderer.end();
+        Resources.game.getShapeRenderer().end();
     }
 
     @Override

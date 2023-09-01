@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2018 Mazatech S.r.l.
+** Copyright (c) 2013-2023 Mazatech S.r.l.
 ** All rights reserved.
 ** 
 ** Redistribution and use in source and binary forms, with or without
@@ -36,25 +36,26 @@
 package com.mazatech.gdx;
 
 // Java
-import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 
 // libGDX
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Disposable;
 
-// AmanithSVG
-import com.mazatech.svgt.SVGTError;
-import com.mazatech.svgt.SVGAssets;
+// AmanithSVG java binding (high level layer)
 import com.mazatech.svgt.SVGColor;
 import com.mazatech.svgt.SVGDocument;
 import com.mazatech.svgt.SVGPacker;
+// AmanithSVG java binding (low level layer)
+import com.mazatech.svgt.AmanithSVG;
+import com.mazatech.svgt.SVGTError;
 
 public class SVGTextureAtlasGenerator implements Disposable {
 
-    public class SVGTextureAtlasPackingException extends Exception {
+    public static class SVGTextureAtlasPackingException extends Exception {
 
         public SVGTextureAtlasPackingException() {
             super();
@@ -65,36 +66,69 @@ public class SVGTextureAtlasGenerator implements Disposable {
         }
     }
 
-    public class SVGAtlasGeneratorInput {
+    private static class SVGAtlasGeneratorInput {
 
-        public SVGAtlasGeneratorInput(FileHandle file, boolean explodeGroups, float scale) {
+        SVGAtlasGeneratorInput(FileHandle file,
+                               boolean explodeGroups,
+                               float scale) {
 
             _file = file;
             _explodeGroups = explodeGroups;
             _scale = scale;
         }
 
-        public FileHandle getFile() {
+        FileHandle getFile() {
 
             return _file;
         }
 
-        public boolean getExplodeGroups() {
+        boolean getExplodeGroups() {
 
             return _explodeGroups;
         }
 
-        public float getScale() {
+        float getScale() {
 
             return _scale;
         }
 
-        private FileHandle _file;
-        private boolean _explodeGroups;
-        private float _scale;
+        private final FileHandle _file;
+        private final boolean _explodeGroups;
+        private final float _scale;
     }
 
-    public SVGTextureAtlasGenerator(float scale, int maxTexturesDimension, int border, boolean pow2Textures, boolean dilateEdgesFix, SVGColor clearColor) {
+    /*
+        Instantiate a texture atlas generator.
+
+        The specified `scale` factor will be applied to all collected SVG
+        documents/elements, in order to realize resolution-independent atlas.
+        Every collected SVG document/element will be packed into rectangular
+        textures, whose dimensions won't exceed the specified 'maxTexturesDimension',
+        in pixels.
+
+        If true, 'pow2Textures' will force textures to have power-of-two dimensions.
+
+        Each packed element will be separated from the others by the specified 'border',
+        in pixels.
+
+        If the 'dilateEdgesFix' flag is set to true, the rendering process will also
+        perform a 1-pixel dilate post-filter; this dilate filter is useful when the
+        texture has some transparent parts (i.e. pixels with alpha component = 0): such
+        flag will induce TextureFilter.Linear minification/magnification filtering.
+
+        If the 'dilateEdgesFix' flag is set to false, no additional dilate post-filter
+        is applied, and the texture minification/magnification filtering is set to
+        TextureFilter.Nearest.
+
+        Before the SVG rendering, pixels are initialized with the given 'clearColor'.
+    */
+    SVGTextureAtlasGenerator(final SVGAssetsGDX svg,
+                             float scale,
+                             int maxTexturesDimension,
+                             int border,
+                             boolean pow2Textures,
+                             boolean dilateEdgesFix,
+                             final SVGColor clearColor) {
 
         // check arguments
         if (scale <= 0) {
@@ -110,15 +144,16 @@ public class SVGTextureAtlasGenerator implements Disposable {
             throw new IllegalArgumentException("clearColor == null");
         }
 
-        _inputAssetsMap = new HashMap<FileHandle, SVGDocument>();
-        _inputAssetsList = new ArrayList<SVGAtlasGeneratorInput>();
-
+        _svg = svg;
         _scale = scale;
         _maxTexturesDimension = maxTexturesDimension;
         _border = border;
         _pow2Textures = pow2Textures;
         _dilateEdgesFix = dilateEdgesFix;
         _clearColor = clearColor;
+
+        _inputAssetsMap = new HashMap<>();
+        _inputAssetsList = new ArrayList<>();
 
         fixMaxDimension();
         fixBorder();
@@ -189,7 +224,7 @@ public class SVGTextureAtlasGenerator implements Disposable {
         return new SVGColor(_clearColor);
     }
 
-    public void setClearColor(SVGColor clearColor) {
+    public void setClearColor(final SVGColor clearColor) {
 
         if (clearColor == null) {
             throw new IllegalArgumentException("clearColor == null");
@@ -222,7 +257,9 @@ public class SVGTextureAtlasGenerator implements Disposable {
         }
     }
 
-    public boolean add(FileHandle file, boolean explodeGroups, float scale) {
+    public boolean add(FileHandle file,
+                       boolean explodeGroups,
+                       float scale) {
 
         // we can't add the same SVG file multiple times
         if (_inputAssetsMap.containsKey(file)) {
@@ -234,15 +271,22 @@ public class SVGTextureAtlasGenerator implements Disposable {
         return true;
     }
 
+    public boolean add(final String internalPath,
+                       boolean explodeGroups,
+                       float scale) {
+
+        return add(Gdx.files.internal(internalPath), explodeGroups, scale);
+    }
+
     private void loadDocuments() {
 
         // create and load SVG documents
-        for (Map.Entry<FileHandle, SVGDocument> entry : _inputAssetsMap.entrySet()) {
+        for (HashMap.Entry<FileHandle, SVGDocument> entry : _inputAssetsMap.entrySet()) {
             // get the associated SVG document
             SVGDocument doc = entry.getValue();
             // if not yet loaded, create it
             if (doc == null) {
-                doc = SVGAssets.createDocument(entry.getKey());
+                doc = _svg.createDocument(entry.getKey());
                 entry.setValue(doc);
             }
         }
@@ -252,7 +296,7 @@ public class SVGTextureAtlasGenerator implements Disposable {
 
         SVGTError err;
         int[] info = new int[2];
-        SVGPacker packer = SVGAssets.createPacker(_scale, _maxTexturesDimension, _border, _pow2Textures);
+        SVGPacker packer = _svg.createPacker(_scale, _maxTexturesDimension, _border, _pow2Textures);
 
         // start a new packing process
         if ((err = packer.begin()) != SVGTError.None) {
@@ -291,7 +335,7 @@ public class SVGTextureAtlasGenerator implements Disposable {
         loadDocuments();
 
         // run the packer and generate the atlas (i.e. textures and regions)
-        return ((packerResult = performPacking()) != null) ? new SVGTextureAtlas(packerResult, _dilateEdgesFix, _clearColor) : null;
+        return ((packerResult = performPacking()) != null) ? new SVGTextureAtlas(_svg, packerResult, _dilateEdgesFix, _clearColor) : null;
     }
 
     @Override
@@ -310,13 +354,14 @@ public class SVGTextureAtlasGenerator implements Disposable {
         _inputAssetsMap = null;
     }
 
-    private float _scale = 1.0f;
-    private int _maxTexturesDimension = 1024;
+    private final SVGAssetsGDX _svg;
+    private float _scale;
+    private int _maxTexturesDimension;
     private int _border = 1;
-    private boolean _pow2Textures = true;
-    private boolean _dilateEdgesFix = true;
-    private SVGColor _clearColor = SVGColor.Clear;
+    private boolean _pow2Textures;
+    private final boolean _dilateEdgesFix;
+    private final SVGColor _clearColor;
     // map each SVG file to the relative SVGDocument
-    private Map<FileHandle, SVGDocument> _inputAssetsMap = null;
-    private List<SVGAtlasGeneratorInput> _inputAssetsList = null;
+    private HashMap<FileHandle, SVGDocument> _inputAssetsMap;
+    private List<SVGAtlasGeneratorInput> _inputAssetsList;
 }

@@ -1,27 +1,24 @@
 package com.azokh.blackbox.ui.element.button;
 
 import com.azokh.blackbox.Resources;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Align;
 
 public abstract class BBButtonText extends BBButton {
 
-    private BitmapFont font;
+    private final BitmapFont font;
     private CharSequence text;
-    private GlyphLayout unselectedText;
-    private GlyphLayout selectedText;
+    private final GlyphLayout unselectedText;
+    private final GlyphLayout selectedText;
 
-    private float text_x, text_y;
+    private final float text_x, text_y;
 
-    private int offsetx, offsety;
-
-    public BBButtonText(int id, int x, int y, CharSequence text, BitmapFont font, int align) {
+    public BBButtonText(int id, float x, float y, CharSequence text, BitmapFont font, int align) {
         super(id);
 
+        //this.x = Resources.
 
         this.text = text;
 
@@ -34,23 +31,23 @@ public abstract class BBButtonText extends BBButton {
                 false, null);
 
 
+        float offsetx = -10;
+        float offsety = unselectedText.height;
 
-        this.offsetx = -10;
-        this.offsety = (int)unselectedText.height + 10;
-
-        text_x = x+offsetx;
-        text_y = Gdx.graphics.getHeight() - (y +offsety);
-
+        float offsetx2 = 0.0f;
         switch (align) {
             case Align.center:
-                this.offsetx -= unselectedText.width/2;
+                offsetx2 = unselectedText.width/2;
                 break;
             case Align.right:
-                this.offsetx -= unselectedText.width;
+                offsetx2 = unselectedText.width;
                 break;
         }
 
-        this.bounds = new Rectangle(x+offsetx, Gdx.graphics.getHeight() - (y +offsety), unselectedText.width+20, unselectedText.height+20);
+        setBounds(x + offsetx - offsetx2, y + 3*offsety/2.0f, unselectedText.width+20, unselectedText.height+20);
+
+        text_x = getBounds().getX() + offsetx2;
+        text_y = getBounds().getY()+offsety;
     }
 
     protected abstract void action();
@@ -60,10 +57,10 @@ public abstract class BBButtonText extends BBButton {
         if(!hidden)
         {
             if (selected) {
-                font.draw(batch, selectedText, text_x+10, text_y+offsety-10);
+                font.draw(batch, selectedText, text_x+10, text_y);
 
             } else {
-                font.draw(batch, unselectedText, text_x+10, text_y+offsety);
+                font.draw(batch, unselectedText, text_x+10, text_y+10);
             }
 
         }

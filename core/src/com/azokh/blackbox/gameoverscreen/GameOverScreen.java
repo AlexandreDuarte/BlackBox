@@ -36,9 +36,9 @@ public class GameOverScreen extends BBScreen {
     public void render(float delta) {
         ScreenUtils.clear(Resources.background);
 
-        Resources.batch.begin();
+        Resources.game.getBatch().begin();
         timer.render();
-        Resources.batch.end();
+        Resources.game.getBatch().end();
 
         gameOver.render();
 
@@ -53,7 +53,7 @@ public class GameOverScreen extends BBScreen {
         }
 
         if (fadeOut.isFinished()) {
-            Resources.game.setScreen(Resources.mainMenuScreen);
+            Resources.game.setScreen(Resources.game.getMainMenuScreen());
         }
     }
 }

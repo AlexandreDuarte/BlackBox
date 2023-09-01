@@ -15,9 +15,9 @@ public class BBScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        Resources.camera.viewportWidth = width;
-        Resources.camera.viewportHeight = height;
-        Resources.camera.update();
+        Resources.game.getCamera().viewportWidth = width;
+        Resources.game.getCamera().viewportHeight = height;
+        Resources.game.getCamera().update();
     }
 
     @Override
@@ -30,7 +30,7 @@ public class BBScreen implements Screen {
 
     @Override
     public void hide() {
-        Resources.batch.flush();
+        Resources.game.getBatch().flush();
     }
 
     @Override

@@ -13,15 +13,14 @@ public class TimerElement implements Element {
     private boolean stop;
     private boolean lock = false;
 
-    private CharSequence text;
     private final BitmapFont font;
-    private final int x, y;
+    private final float x, y;
 
     private TimerParse parser;
 
     private final int glyphOffset;
 
-    public TimerElement(int x, int y, BitmapFont font, boolean stopped) {
+    public TimerElement(float x, float y, BitmapFont font, boolean stopped) {
         this.x = x;
         this.y = y;
         this.font = font;
@@ -32,11 +31,11 @@ public class TimerElement implements Element {
 
     @Override
     public void render() {
-        font.draw(Resources.batch, parser.millis, x + glyphOffset, y, 2, Align.center, false);
-        font.draw(Resources.batch, ":", x + glyphOffset/2.0f, y, 1, Align.center, false);
-        font.draw(Resources.batch, parser.seconds, x, y, 2, Align.center, false);
-        font.draw(Resources.batch, ":", x - glyphOffset/2.0f, y, 1, Align.center, false);
-        font.draw(Resources.batch, parser.minutes, x - glyphOffset, y, 2, Align.center, false);
+        font.draw(Resources.game.getBatch(), parser.millis, x + glyphOffset, y, 2, Align.center, false);
+        font.draw(Resources.game.getBatch(), ":", x + glyphOffset/2.0f, y, 1, Align.center, false);
+        font.draw(Resources.game.getBatch(), parser.seconds, x, y, 2, Align.center, false);
+        font.draw(Resources.game.getBatch(), ":", x - glyphOffset/2.0f, y, 1, Align.center, false);
+        font.draw(Resources.game.getBatch(), parser.minutes, x - glyphOffset, y, 2, Align.center, false);
     }
 
     @Override

@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2018 Mazatech S.r.l.
+** Copyright (c) 2013-2023 Mazatech S.r.l.
 ** All rights reserved.
 ** 
 ** Redistribution and use in source and binary forms, with or without
@@ -38,14 +38,16 @@ package com.mazatech.gdx;
 // libGDX
 import com.badlogic.gdx.utils.Disposable;
 
-// AmanithSVG
-import com.mazatech.svgt.SVGTRenderingQuality;
+// AmanithSVG java binding (high level layer)
 import com.mazatech.svgt.SVGColor;
 import com.mazatech.svgt.SVGPacker;
 
 public class SVGTextureAtlas implements Disposable {
 
-    SVGTextureAtlas(SVGPacker.SVGPackedBin[] packerResult, boolean dilateEdgesFix, SVGColor clearColor) {
+    SVGTextureAtlas(final SVGAssetsGDX svg,
+                    final SVGPacker.SVGPackedBin[] packerResult,
+                    boolean dilateEdgesFix,
+                    final SVGColor clearColor) {
 
         if (packerResult == null) {
             throw new IllegalArgumentException("packerResult == null");
@@ -54,16 +56,19 @@ public class SVGTextureAtlas implements Disposable {
             throw new IllegalArgumentException("clearColor == null");
         }
         // do the real atlas construction
-        build(packerResult, dilateEdgesFix, clearColor);
+        build(svg, packerResult, dilateEdgesFix, clearColor);
     }
 
-    private void build(SVGPacker.SVGPackedBin[] packerResult, boolean dilateEdgesFix, SVGColor clearColor) {
+    private void build(final SVGAssetsGDX svg,
+                       final SVGPacker.SVGPackedBin[] packerResult,
+                       boolean dilateEdgesFix,
+                       final SVGColor clearColor) {
 
         int pagesCount = packerResult.length;
 
         _pages = new SVGTextureAtlasPage[pagesCount];
         for (int i = 0; i < pagesCount; ++i) {
-            _pages[i] = new SVGTextureAtlasPage(packerResult[i], dilateEdgesFix, clearColor);
+            _pages[i] = new SVGTextureAtlasPage(svg, packerResult[i], dilateEdgesFix, clearColor);
         }
     }
 

@@ -23,8 +23,8 @@ public class BBButtonRightArrow extends BBListenerButtonShape{
 
     Vector2 P = new Vector2(getBounds().getX(), getBounds().getY());
 
-    public BBButtonRightArrow(int id, int x, int y, int width, int height, BBListener ffListener) {
-        super(id, x - (int)L/2, y, (int)L, (int)L, ffListener);
+    public BBButtonRightArrow(int id, float x, float y, BBListener ffListener) {
+        super(id, x - L/2, y, L, L, ffListener);
     }
 
     @Override

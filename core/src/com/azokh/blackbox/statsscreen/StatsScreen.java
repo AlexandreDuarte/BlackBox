@@ -18,7 +18,7 @@ public class StatsScreen extends BBScreen implements ScreenSelectionInterface {
 
     Stats stats;
 
-    BBScreen nextScreen = Resources.mainMenuScreen;
+    BBScreen nextScreen = Resources.game.getMainMenuScreen();
 
     public StatsScreen() {
 
@@ -33,7 +33,7 @@ public class StatsScreen extends BBScreen implements ScreenSelectionInterface {
     public void render(float delta) {
         ScreenUtils.clear(Resources.background);
 
-        Resources.camera.update();
+        Resources.game.getCamera().update();
 
         stats.render();
 

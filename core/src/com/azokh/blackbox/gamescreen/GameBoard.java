@@ -5,7 +5,6 @@ import com.azokh.blackbox.gamescreen.elements.BoardCell;
 import com.azokh.blackbox.gamescreen.elements.EmptyBoardCell;
 import com.azokh.blackbox.gamescreen.elements.HiddenBoardCell;
 import com.azokh.blackbox.gamescreen.elements.InputBoardCell;
-import com.azokh.blackbox.gamescreen.elements.InputCornerCell;
 import com.azokh.blackbox.gamescreen.elements.TimerElement;
 import com.azokh.blackbox.ui.element.Element;
 import com.badlogic.gdx.Gdx;
@@ -37,7 +36,7 @@ public class GameBoard implements Element, InputProcessor {
         this.boardSize = size+2;
         this.cellSize = Gdx.graphics.getWidth()/(float)(size+3);
         this.board_elements = new BoardCell[boardSize][boardSize];
-        this.yOffset = Gdx.graphics.getHeight()/2.0f - cellSize*(boardSize)/2;
+        this.yOffset = Resources.game.getGameHeight()/2.0f - cellSize*(boardSize)/2;
         this.board_raw = new int[size][size];
         generateBoard();
         this.gameLogic = new GameLogic(this);
@@ -48,9 +47,9 @@ public class GameBoard implements Element, InputProcessor {
 
                 if (x == 0 || x==boardSize-1 || y == 0 || y==boardSize-1) {
                     if (x==y || x+y == boardSize-1) {
-                        this.board_elements[y][x] = new InputCornerCell(new Rectangle(cellSize * (x + 0.5f) + cellSpacing, yOffset + cellSize * y + cellSpacing, cellSize-2*cellSpacing, cellSize-2*cellSpacing), InputBoardCell.Direction.getCornerDirection(y == 0, x == 0));
+                        this.board_elements[y][x] = new InputBoardCell(new Rectangle(cellSize * (x + 0.5f) + cellSpacing, yOffset + cellSize * y + cellSpacing, cellSize-2*cellSpacing, cellSize-2*cellSpacing), InputBoardCell.Direction.getCornerDirection(y == 0, x == 0), true);
                     } else {
-                        this.board_elements[y][x] = new InputBoardCell(new Rectangle(cellSize * (x + 0.5f) + cellSpacing, yOffset + cellSize * y + cellSpacing, cellSize-2*cellSpacing, cellSize-2*cellSpacing), InputBoardCell.Direction.getDirection(x == 0 || y == 0, x == 0 || x == boardSize-1));
+                        this.board_elements[y][x] = new InputBoardCell(new Rectangle(cellSize * (x + 0.5f) + cellSpacing, yOffset + cellSize * y + cellSpacing, cellSize-2*cellSpacing, cellSize-2*cellSpacing), InputBoardCell.Direction.getDirection(x == 0 || y == 0, x == 0 || x == boardSize-1), false);
 
                         //this.board_elements[y][x] = new InputBoardCell(y==0 || y==boardSize-1, y==boardSize-1 || x==boardSize-1, new Rectangle(cellSize * (1+x) + 2, yOffset + cellSize * y + 2, cellSize-4, cellSize-4));
                     }
@@ -88,14 +87,14 @@ public class GameBoard implements Element, InputProcessor {
 
     @Override
     public void render() {
-        Resources.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        Resources.shapeRenderer.setColor(Resources.board);
+        Resources.game.getShapeRenderer().begin(ShapeRenderer.ShapeType.Filled);
+        Resources.game.getShapeRenderer().setColor(Resources.board);
         for (int x = 0; x < boardSize; x++) {
             for (int y = 0; y < boardSize; y++) {
                 this.board_elements[y][x].render();
             }
         }
-        Resources.shapeRenderer.end();
+        Resources.game.getShapeRenderer().end();
     }
 
     static final float STEP_CONSTANT = 0.2f;

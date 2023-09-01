@@ -1,6 +1,8 @@
 /****************************************************************************
-** Copyright (c) 2013-2018 Mazatech S.r.l.
+** Copyright (c) 2013-2023 Mazatech S.r.l.
 ** All rights reserved.
+** 
+** This file is part of AmanithSVG software, an SVG rendering library.
 ** 
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted (subject to the limitations in the disclaimer
@@ -48,7 +50,7 @@ public enum SVGTMeetOrSlice {
         extend beyond the bounds of the viewBox (i.e., the area into which the viewBox will draw will be smaller
         than the viewport).
     */
-    Meet(AmanithSVG.SVGT_ASPECT_RATIO_MEET),
+    Meet(AmanithSVGJNI.SVGT_ASPECT_RATIO_MEET),
 
     /*
         Scale the graphic such that:
@@ -60,7 +62,7 @@ public enum SVGTMeetOrSlice {
         extend beyond the bounds of the viewport (i.e., the area into which the viewBox will draw is larger
         than the viewport).
     */
-    Slice(AmanithSVG.SVGT_ASPECT_RATIO_SLICE);
+    Slice(AmanithSVGJNI.SVGT_ASPECT_RATIO_SLICE);
 
     SVGTMeetOrSlice(int svgtEnum) {
         
@@ -78,5 +80,5 @@ public enum SVGTMeetOrSlice {
     }
 
     private final int _svgtEnum;
-    private static SVGTMeetOrSlice[] _allValues = values();
+    private static final SVGTMeetOrSlice[] _allValues = values();
 }

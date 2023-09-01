@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2018 Mazatech S.r.l.
+** Copyright (c) 2013-2023 Mazatech S.r.l.
 ** All rights reserved.
 ** 
 ** Redistribution and use in source and binary forms, with or without
@@ -40,20 +40,22 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.BufferUtils;
 
-// AmanithSVG
+// AmanithSVG java binding (high level layer)
 import com.mazatech.svgt.SVGSurface;
 
 public final class SVGTextureUtils {
 
     public static int getGlMaxTextureDimension() {
 
-        // use LibGDX's BufferUtils class
+        // use libGDX's BufferUtils class
         java.nio.IntBuffer buffer = BufferUtils.newIntBuffer(16);
         Gdx.gl.glGetIntegerv(GL20.GL_MAX_TEXTURE_SIZE, buffer);
         return buffer.get();
     }
 
-    public static void uploadPixels(int target, SVGSurface surface, boolean dilateEdgesFix) {
+    public static void uploadPixels(int target,
+                                    final SVGSurface surface,
+                                    boolean dilateEdgesFix) {
 
         int internalFormat, format, width, height;
         boolean useTempCopy = false;
@@ -89,7 +91,7 @@ public final class SVGTextureUtils {
             // allocate a temporary pixels buffer
             java.nio.IntBuffer tempPixels = BufferUtils.newIntBuffer(width * height);
             // perform the copy
-            surface.copy(tempPixels, (_bgraFullSupport || _bgraHalfSupport) ? false : true, dilateEdgesFix);
+            surface.copy(tempPixels, (!_bgraFullSupport) && (!_bgraHalfSupport), dilateEdgesFix);
             // upload pixels to the GPU
             Gdx.gl.glTexImage2D(target, 0, internalFormat, width, height, 0, format, GL20.GL_UNSIGNED_BYTE, tempPixels);
         }
@@ -102,7 +104,7 @@ public final class SVGTextureUtils {
     // Given an unsigned value greater than 0, check if it's a power of two number.
     public static boolean isPow2(int value) {
 
-        return (((value & (value - 1)) == 0) ? true : false);
+        return ((value & (value - 1)) == 0);
     }
 
     // Return the smallest power of two greater than (or equal to) the specified value.

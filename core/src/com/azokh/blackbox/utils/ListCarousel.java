@@ -1,27 +1,27 @@
-package com.azokh.blackbox.ui.element.carousel;
+package com.azokh.blackbox.utils;
 
 import java.util.ListIterator;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-public class Carousel<T extends Enum<T>> implements Iterable<T> {
+public class ListCarousel<T extends Enum<T>> implements Iterable<T> {
 
     T carouselEnum;
 
-    public Carousel(T carouselEnum) {
+    public ListCarousel(T carouselEnum) {
         this.carouselEnum = carouselEnum;
     }
 
     @Override
     public ListIterator<T> iterator() {
-        return new CarouselIterator<T>(carouselEnum);
+        return new ListCarouselIterator<>(carouselEnum);
     }
 
-    static class CarouselIterator<T extends Enum<T>> implements ListIterator<T> {
+    static class ListCarouselIterator<T extends Enum<T>> implements ListIterator<T> {
 
         T next;
 
-        public CarouselIterator(T carouselEnum) {
+        public ListCarouselIterator(T carouselEnum) {
             this.next = carouselEnum;
         }
 

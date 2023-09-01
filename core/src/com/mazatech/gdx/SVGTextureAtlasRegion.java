@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013-2018 Mazatech S.r.l.
+** Copyright (c) 2013-2023 Mazatech S.r.l.
 ** All rights reserved.
 ** 
 ** Redistribution and use in source and binary forms, with or without
@@ -38,12 +38,23 @@ package com.mazatech.gdx;
 // libGDX
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-// AmanithSVG
+// AmanithSVG java binding (low level layer)
 import com.mazatech.svgt.SVGTHandle;
 
 public class SVGTextureAtlasRegion extends TextureRegion {
 
-    SVGTextureAtlasRegion(SVGTextureAtlasPage page, final String elemName, int originalX, int originalY, int x, int y, int width, int height, SVGTHandle docHandle, int zOrder) {
+    SVGTextureAtlasRegion(final SVGTextureAtlasPage page,
+                          final String elemName,
+                          int originalX,
+                          int originalY,
+                          int x,
+                          int y,
+                          int width,
+                          int height,
+                          final SVGTHandle docHandle,
+                          int zOrder,
+                          float dstViewportWidth,
+                          float dstViewportHeight) {
 
         super(page, x, page.getHeight() - y - height, width, height);
         super.flip(false, true);
@@ -55,6 +66,8 @@ public class SVGTextureAtlasRegion extends TextureRegion {
         _y = y;
         _docHandle = docHandle;
         _zOrder = zOrder;
+        _dstViewportWidth = dstViewportWidth;
+        _dstViewportHeight = dstViewportHeight;
     }
 
     public String getElemName() {
@@ -92,16 +105,30 @@ public class SVGTextureAtlasRegion extends TextureRegion {
         return _zOrder;
     }
 
+    public float getDstViewportWidth() {
+
+        return _dstViewportWidth;
+    }
+
+    public float getDstViewportHeight() {
+
+        return _dstViewportHeight;
+    }
+
     // 'id' attribute, empty if not present.
-    private String _elemName = null;
+    private final String _elemName;
     // Original rectangle corner (i.e. the position within the original SVG).
-    private int _originalX = 0;
-    private int _originalY = 0;
+    private final int _originalX;
+    private final int _originalY;
     // Rectangle corner position (i.e. the position within the texture).
-    private int _x = 0;
-    private int _y = 0;
+    private final int _x;
+    private final int _y;
     // SVG document handle.
-    private SVGTHandle _docHandle = null;
+    private final SVGTHandle _docHandle;
     // Z-order (i.e. the rendering order of the element, as induced by the SVG tree).
-    private int _zOrder = 0;
+    private final int _zOrder;
+    // The used destination viewport width (induced by packing scale factor).
+    private final float _dstViewportWidth;
+    // The used destination viewport height (induced by packing scale factor).
+    private final float _dstViewportHeight;
 }
