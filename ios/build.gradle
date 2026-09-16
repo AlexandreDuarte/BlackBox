@@ -1,7 +1,14 @@
-sourceSets.main.java.srcDirs = [ "src/" ]
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
 
-sourceCompatibility = '1.7'
-[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+sourceSets.main.java.srcDirs = [ "src/" ]
 
 ext {
 	mainClassName = "com.azokh.blackbox.IOSLauncher"

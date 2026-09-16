@@ -2,8 +2,6 @@ package com.azokh.blackbox.utils;
 
 import java.util.ListIterator;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 public class ListCarousel<T extends Enum<T>> implements Iterable<T> {
 
     T carouselEnum;
@@ -64,7 +62,7 @@ public class ListCarousel<T extends Enum<T>> implements Iterable<T> {
 
         @Override
         public void remove() {
-            throw new NotImplementedException();
+            throw new UnsupportedOperationException();
         }
 
         @Override

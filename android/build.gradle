@@ -1,7 +1,6 @@
 android {
     namespace "com.azokh.blackbox"
-    buildToolsVersion "33.0.2"
-    compileSdkVersion 33
+    compileSdkVersion 36
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -21,8 +20,8 @@ android {
     }
     defaultConfig {
         applicationId "com.azokh.blackbox"
-        minSdkVersion 19
-        targetSdkVersion 33
+        minSdkVersion 30
+        targetSdkVersion 36
         versionCode 9
         versionName "0.0.9"
         multiDexEnabled true
@@ -30,12 +29,17 @@ android {
     buildTypes {
         release {
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     buildFeatures {
         renderScript true
         aidl true
+        buildConfig true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 }
 

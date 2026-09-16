@@ -34,20 +34,15 @@ public class GPGSClient implements IGameServiceClient {
 
         GamesSignInClient gamesSignInClient = PlayGames.getGamesSignInClient(activity);
 
-        gamesSignInClient.isAuthenticated().addOnCompleteListener(isAuthenticatedTask -> {
-
-            boolean isAuth = (isAuthenticatedTask.isSuccessful() &&
-                    isAuthenticatedTask.getResult().isAuthenticated());
-
-            if (isAuth) {
+        gamesSignInClient.signIn().addOnCompleteListener(authenticationResultTask -> {
+            if (authenticationResultTask.isSuccessful() && authenticationResultTask.getResult().isAuthenticated()) {
+                Gdx.app.log("Game Services", "Successfully authenticated");
                 isAuthenticated = true;
                 authAction();
             } else {
                 isAuthenticated = false;
                 Gdx.app.log("Game Services", "Authentication failed");
             }
-
-
         });
     }
 
@@ -63,15 +58,16 @@ public class GPGSClient implements IGameServiceClient {
     }
 
     private void updateGoogleLeaderboard(String leaderboardId, long value) {
-        if (isAuthenticated)
+        if (isAuthenticated && leaderboardsClient != null)
             leaderboardsClient.submitScore(leaderboardId, value);
     }
 
     public void authAction() {
         leaderboardsClient = PlayGames.getLeaderboardsClient(activity);
         PlayGames.getPlayersClient(activity).getCurrentPlayer().addOnCompleteListener(mTask -> {
-            //System.out.println(mTask.getResult().getPlayerId());
-                }
-        );
+            if (mTask.isSuccessful()) {
+                Gdx.app.log("Game Services", "Player ID: " + mTask.getResult().getPlayerId());
+            }
+        });
     }
 }
