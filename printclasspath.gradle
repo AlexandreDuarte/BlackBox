@@ -1,0 +1,16 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+        google()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:9.4.0'
+        classpath 'com.mobidevelop.robovm:robovm-gradle-plugin:2.3.26'
+    }
+}
+task printClasspath {
+    doLast {
+        buildscript.configurations.classpath.each { println it.name }
+    }
+}

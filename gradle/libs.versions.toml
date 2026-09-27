@@ -1,0 +1,24 @@
+[versions]
+core = "1.19.1"
+gdx = "1.14.2"
+gradle = "9.4.1"
+gradle-toolchains-foojay-resolver-convention = "1.0.0"
+play-services-games-v2 = "22.1.0"
+robovm = "2.3.26"
+
+[libraries]
+androidx-core = { group = "androidx.core", name = "core", version.ref = "core" }
+gdx = { group = "com.badlogicgames.gdx", name = "gdx", version.ref = "gdx" }
+gdx-backend-android = { group = "com.badlogicgames.gdx", name = "gdx-backend-android", version.ref = "gdx" }
+gdx-backend-robovm = { group = "com.badlogicgames.gdx", name = "gdx-backend-robovm", version.ref = "gdx" }
+gdx-freetype = { group = "com.badlogicgames.gdx", name = "gdx-freetype", version.ref = "gdx" }
+gdx-freetype-platform = { group = "com.badlogicgames.gdx", name = "gdx-freetype-platform", version.ref = "gdx" }
+gdx-platform = { group = "com.badlogicgames.gdx", name = "gdx-platform", version.ref = "gdx" }
+gradle = { group = "com.android.tools.build", name = "gradle", version.ref = "gradle" }
+play-services-games-v2 = { group = "com.google.android.gms", name = "play-services-games-v2", version.ref = "play-services-games-v2" }
+robovm-cocoatouch = { group = "com.mobidevelop.robovm", name = "robovm-cocoatouch", version.ref = "robovm" }
+robovm-gradle-plugin = { group = "com.mobidevelop.robovm", name = "robovm-gradle-plugin", version.ref = "robovm" }
+robovm-rt = { group = "com.mobidevelop.robovm", name = "robovm-rt", version.ref = "robovm" }
+
+[plugins]
+foojay-resolver = { id = "org.gradle.toolchains.foojay-resolver-convention", version.ref = "gradle-toolchains-foojay-resolver-convention" }

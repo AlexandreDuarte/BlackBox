@@ -1,6 +1,6 @@
 android {
-    namespace "com.azokh.blackbox"
-    compileSdkVersion 36
+    namespace "com.azkh.blackbox"
+    compileSdkVersion 37
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -11,20 +11,21 @@ android {
             assets.srcDirs = ['../assets']
             jniLibs.srcDirs = ['libs']
         }
-
     }
-    packagingOptions {
+    packaging {
         resources {
             excludes += ['META-INF/robovm/ios/robovm.xml']
         }
+        jniLibs {
+            useLegacyPackaging = false
+        }
     }
     defaultConfig {
-        applicationId "com.azokh.blackbox"
+        applicationId "com.azkh.blackbox"
         minSdkVersion 30
-        targetSdkVersion 36
-        versionCode 9
-        versionName "0.0.9"
-        multiDexEnabled true
+        targetSdkVersion 37
+        versionCode 12
+        versionName "0.0.12"
     }
     buildTypes {
         release {
@@ -96,7 +97,7 @@ task run(type: Exec) {
     }
 
     def adb = path + "/platform-tools/adb"
-    commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.azokh.blackbox/com.azokh.blackbox.AndroidLauncher'
+    commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.azkh.blackbox/com.azkh.blackbox.AndroidLauncher'
 }
 
 eclipse.project.name = appName + "-android"

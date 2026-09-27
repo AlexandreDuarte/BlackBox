@@ -1,0 +1,65 @@
+package com.azkh.blackbox.gamescreen;
+
+import com.azkh.blackbox.Resources;
+import com.azkh.blackbox.effects.CRTBoardRenderer;
+import com.azkh.blackbox.gamescreen.elements.ObserverBoardCell;
+import com.azkh.blackbox.gamescreen.elements.StaticBoardCell;
+import com.azkh.blackbox.ui.element.Element;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+
+public class GameBoardObserver implements Element {
+
+    StaticBoardCell[][] board_elements;
+    int boardSize;
+    CRTBoardRenderer crtRenderer;
+
+    public GameBoardObserver(GameBoard gameBoard) {
+
+        this.boardSize = gameBoard.boardSize;
+        this.board_elements = new StaticBoardCell[boardSize][boardSize];
+        this.crtRenderer = new CRTBoardRenderer();
+
+        for (int i = 0; i < boardSize-2; i++) {
+            for (int j = 0; j < boardSize-2; j++) {
+                if (gameBoard.board_raw[j][i] == 1) {
+                    this.board_elements[j+1][i+1] = new ObserverBoardCell(gameBoard.board_elements[j+1][i+1].getBounds(), true);
+                } else {
+                    this.board_elements[j+1][i+1] = new ObserverBoardCell(gameBoard.board_elements[j+1][i+1].getBounds(), false);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void render() {
+        if (crtRenderer != null) {
+            crtRenderer.begin();
+        }
+        Resources.game.getShapeRenderer().begin(ShapeRenderer.ShapeType.Filled);
+        Resources.game.getShapeRenderer().setColor(Resources.titleColor);
+        for (int x = 1; x < boardSize-1; x++) {
+            for (int y = 1; y < boardSize-1; y++) {
+                this.board_elements[y][x].render();
+            }
+        }
+        Resources.game.getShapeRenderer().end();
+        if (crtRenderer != null) {
+            crtRenderer.endAndDraw();
+        }
+    }
+
+    @Override
+    public void update(float delta) {
+
+    }
+
+    @Override
+    public void dispose() {
+        if (crtRenderer != null) {
+            crtRenderer.dispose();
+            crtRenderer = null;
+        }
+    }
+
+
+}

@@ -1,3 +1,19 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        gradlePluginPortal()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        google()
+    }
+    dependencies {
+        classpath libs.robovm.gradle.plugin
+    }
+}
+
+apply plugin: "java-library"
+apply plugin: "robovm"
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
@@ -11,7 +27,16 @@ tasks.withType(JavaCompile).configureEach {
 sourceSets.main.java.srcDirs = [ "src/" ]
 
 ext {
-	mainClassName = "com.azokh.blackbox.IOSLauncher"
+	mainClassName = "com.azkh.blackbox.IOSLauncher"
+}
+
+dependencies {
+    implementation project(":core")
+    api libs.robovm.rt
+    api libs.robovm.cocoatouch
+    api libs.gdx.backend.robovm
+    api libs.gdx.platform
+    api libs.gdx.freetype.platform
 }
 
 launchIPhoneSimulator.dependsOn build
